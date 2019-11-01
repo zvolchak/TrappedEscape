@@ -27,7 +27,7 @@ namespace GHAbilities {
         }//Start
 
 
-        public override void Reset(bool isForceReset = false) {
+        public override void Reset() {
         }//Reset
 
 

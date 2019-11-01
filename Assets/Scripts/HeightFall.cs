@@ -32,7 +32,7 @@ namespace GHActor {
             if(_statusEffectCtrl == null)
                 _statusEffectCtrl = GetComponent<ActorStatusController>();
 
-            _actor.EGroundedStateListener += GroundStateChanged;
+            _actor.EOnGroundStateChange += GroundStateChanged;
             if (_ladderClimber != null) {
                 _ladderClimber.EOnLadderUnset += JumpedOffLadder;
                 _ladderClimber.EOnLadderUsed += OnLadderUsed;

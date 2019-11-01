@@ -87,7 +87,7 @@ namespace GHAbilities {
         }//Stop
 
 
-        public override void Reset(bool isForceReset = false) {
+        public override void Reset() {
             IsSprinting = false;
             this.sprintDirection = 0;
         }//Reset

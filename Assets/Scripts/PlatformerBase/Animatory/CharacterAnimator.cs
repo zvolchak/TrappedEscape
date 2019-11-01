@@ -164,14 +164,14 @@ public class CharacterAnimator : MonoBehaviour{
     private void unsubscribe() {
         ActorAbilitiesProps abilities = PlayerCmp.Abilities;
 
-        abilities.JumpCmp.EOnUse -= this.onTriggerInvoke;
-        PlayerCmp.OnLandedListeners -= SetLandedTrigger;
-        PlayerCmp.EGroundedStateListener -= groundStateListenerInvoke;
-        PlayerCmp.EVelocityUpdateListeners -= velocityUpdateInvoke;
-        abilities.WallGrabCmp.EOnWallGrab -= onWallStateInvoke;
-        abilities.WallGrabCmp.EOnWallJump -= onWallJumpInvoke;
-        abilities.DashCmp.EOnUse -= SetDashedTrigger;
-        PlayerCmp.Abilities.CrouchCmp.EOnUse -= onCrouchInvoke;
+        //abilities.JumpCmp.EOnUse -= this.onTriggerInvoke;
+        //PlayerCmp.OnLandedListeners -= SetLandedTrigger;
+        //PlayerCmp.EGroundedStateListener -= groundStateListenerInvoke;
+        //PlayerCmp.EVelocityUpdateListeners -= velocityUpdateInvoke;
+        //abilities.WallGrabCmp.EOnWallGrab -= onWallStateInvoke;
+        //abilities.WallGrabCmp.EOnWallJump -= onWallJumpInvoke;
+        //abilities.DashCmp.EOnUse -= SetDashedTrigger;
+        //PlayerCmp.Abilities.CrouchCmp.EOnUse -= onCrouchInvoke;
     }//unsubscribe
 
 
@@ -180,14 +180,14 @@ public class CharacterAnimator : MonoBehaviour{
 
         ActorAbilitiesProps abilities = PlayerCmp.Abilities;
 
-        abilities.JumpCmp.EOnUse += onTriggerInvoke;
-        PlayerCmp.OnLandedListeners += SetLandedTrigger;
-        PlayerCmp.EGroundedStateListener += groundStateListenerInvoke;
-        PlayerCmp.EVelocityUpdateListeners += velocityUpdateInvoke;
-        abilities.WallGrabCmp.EOnWallGrab += onWallStateInvoke;
-        abilities.WallGrabCmp.EOnWallJump += onWallJumpInvoke;
-        abilities.DashCmp.EOnUse += SetDashedTrigger;
-        PlayerCmp.Abilities.CrouchCmp.EOnUse += onCrouchInvoke;
+        //abilities.JumpCmp.EOnUse += onTriggerInvoke;
+        //PlayerCmp.OnLandedListeners += SetLandedTrigger;
+        //PlayerCmp.EGroundedStateListener += groundStateListenerInvoke;
+        //PlayerCmp.EVelocityUpdateListeners += velocityUpdateInvoke;
+        //abilities.WallGrabCmp.EOnWallGrab += onWallStateInvoke;
+        //abilities.WallGrabCmp.EOnWallJump += onWallJumpInvoke;
+        //abilities.DashCmp.EOnUse += SetDashedTrigger;
+        //PlayerCmp.Abilities.CrouchCmp.EOnUse += onCrouchInvoke;
     }//subscribe
 
     /********************************** GETTERS/SETTERS **********************************/
