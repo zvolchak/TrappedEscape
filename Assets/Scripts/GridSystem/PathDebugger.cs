@@ -56,6 +56,9 @@ public class PathDebugger : MonoBehaviour {
             Gizmos.DrawSphere(node.GetPosition(), 0.3f);
         }//for
 
+        if(Path == null)
+            return;
+
         for (int i = 0; i < Path.Count; i++) {
             Gizmos.color = Color.blue;
             if (i > 0) {
