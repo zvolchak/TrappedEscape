@@ -26,8 +26,8 @@ namespace GHAbilities {
             _jumpCtrl.EOnUse -= OnJumpEvent;
             _jumpCtrl.EOnUse += OnJumpEvent;
 
-            _player.OnLandedListeners -= OnLandedEvent;
-            _player.OnLandedListeners += OnLandedEvent;
+            _player.EOnLanded -= OnLandedEvent;
+            _player.EOnLanded += OnLandedEvent;
         }//Start
 
 
@@ -57,7 +57,7 @@ namespace GHAbilities {
 
         public void OnDisable() {
             if (_player != null)
-                _player.OnLandedListeners -= OnLandedEvent;
+                _player.EOnLanded -= OnLandedEvent;
             if (_jumpCtrl != null)
                 _jumpCtrl.EOnUse -= OnJumpEvent;
         }//OnDisable

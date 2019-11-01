@@ -8,6 +8,9 @@ TextureImporter:
   - first:
       213: -5809826313601699783
     second: FreaksVSWorld_1
+  - first:
+      213: 5572547769784088190
+    second: FreaksVSWorld_2
   externalObjects: {}
   serializedVersion: 10
   mipmaps:
@@ -145,7 +148,7 @@ TextureImporter:
         width: 11
         height: 16
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -153,6 +156,27 @@ TextureImporter:
       bones: []
       spriteID: 3655ba0f7f8f7fe48b7d2e36eadfe205
       internalID: -5809826313601699783
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: FreaksVSWorld_2
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 348
+        width: 11
+        height: 16
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 442260f7bb5de1544a92f9d023ece1c6
+      internalID: 5572547769784088190
       vertices: []
       indices: 
       edges: []

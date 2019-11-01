@@ -108,8 +108,9 @@ namespace GHAbilities {
         }
 
 
-        public override void Reset(bool isForceReset = false) {
-            if (!bIsNeedReset && !isForceReset)
+        public override void Reset() {
+            //if (!bIsNeedReset && !isForceReset)
+            if (!bIsNeedReset)
                 return;
             this.Stop(Vector2.zero);
         }//Reset

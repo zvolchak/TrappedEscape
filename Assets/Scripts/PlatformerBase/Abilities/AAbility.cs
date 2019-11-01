@@ -31,7 +31,7 @@ namespace GHAbilities {
         /// <summary>
         ///  Reset props of the ability.
         /// </summary>
-        public abstract void Reset(bool isForceReset = false);
+        public abstract void Reset();
 
 
         public virtual void Start() {

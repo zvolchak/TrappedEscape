@@ -68,7 +68,7 @@ namespace GHAbilities {
         }//Stop
 
 
-        public override void Reset(bool isForceReset = false) {
+        public override void Reset() {
             this.CurrentJumps = 0;
         }//Reset
 

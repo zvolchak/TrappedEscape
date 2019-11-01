@@ -130,6 +130,9 @@ public class CollisionDetection : MonoBehaviour {
         RaycastHit2D hit = Physics2D.Raycast(rayOrigin, direction,
                                             rayLength, this.Props.CollisionMask);
 
+        //To ignore raycast hits on itself, unselect the "Queries Start In Colliders"
+        //at the "Project Settings -> Physics 2D
+
         RaycastMeta meta = new RaycastMeta(rayOrigin, direction, hit, rayLength, positionIndex);
 
 #if UNITY_EDITOR
@@ -219,6 +222,11 @@ public class CollisionDetection : MonoBehaviour {
             if(this.VerticalRayMeta[i] == null)
                 this.VerticalRayMeta[i] = new RaycastMeta();
             this.VerticalRayMeta[i].Set(meta);
+
+            //if (meta.Ray && meta.Ray.collider.gameObject.GetHashCode() == this.gameObject.GetHashCode()) {
+            //    Debug.Log(meta.Ray.collider.gameObject.name);
+            //    continue;
+            //}
 
             //---- NO HIT ----
             if (!meta.Ray) {
