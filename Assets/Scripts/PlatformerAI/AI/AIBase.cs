@@ -1,66 +1,67 @@
-﻿using UnityEngine;
+﻿using GHAI.AIDecisions;
+using UnityEngine;
+
+namespace GHAI {
+    namespace AIStates {
+        ///<summery>
+        /// Something that needs te be inherited by any other AI related
+        /// behaviour objects.
+        ///</summery>
+        public abstract class AIBase : StateMachineBehaviour {
+
+            public AIDecision[] Decisions;
+            public AIProps Props;
+            public AIController AICtrl;
+
+            public abstract bool Action();
+            public abstract bool Interrupt();
 
 
-///<summery>
-/// Something that needs te be inherited by any other AI related
-/// behaviour objects.
-///</summery>
-public abstract class AIBase : StateMachineBehaviour {
-
-    public AIDecision[] Decisions;
-    public AIProps Props;
-    public AIController NPC;
-
-    //public AIDecision currDecision;
+            public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+                base.OnStateEnter(animator, stateInfo, layerIndex);
+                if (AICtrl == null)
+                    AICtrl = animator.GetComponent<AIController>();
+            }//OnStateEnter
 
 
-    public abstract bool Action();
-    public abstract bool Interrupt();
+            public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+                base.OnStateUpdate(animator, stateInfo, layerIndex);
+                CheckDecisions();
+                //if(this.currDecision != null && decision != this.currDecision)
+                //    return;
+                //if(this.currDecision == null)
+                //    this.currDecision = decision;
+
+                this.Action();
+            }//OnStateUpdate
 
 
-    public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateEnter(animator, stateInfo, layerIndex);
-        if (NPC == null)
-            NPC = animator.GetComponent<AIController>();
-    }//OnStateEnter
+            public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+                base.OnStateExit(animator, stateInfo, layerIndex);
+                this.Interrupt();
+                //this.currDecision = null;
+            }//OnStateExit
 
 
-    public override void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateUpdate(animator, stateInfo, layerIndex);
-        CheckDecisions();
-        //if(this.currDecision != null && decision != this.currDecision)
-        //    return;
-        //if(this.currDecision == null)
-        //    this.currDecision = decision;
+            public virtual void CheckDecisions() {
+                int size = Decisions.Length;
+                if (AICtrl == null) {
+                    #if UNITY_EDITOR
+                        Debug.LogWarning("NPC controller for " + this.name + " is null!");
+                    #endif
+                    return;
+                }
+                for (int i = 0; i < size; i++) {
+                    if (Decisions[i] == null) {
+                        #if UNITY_EDITOR
+                        Debug.LogWarning("Decision " + i + " is null!");
+                        #endif
+                        continue;
+                    }
+                    Decisions[i].Decide(AICtrl);
+                }//for
+            }//CheckDecisions
 
-        this.Action();
-    }//OnStateUpdate
-
-
-    public override void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
-        base.OnStateExit(animator, stateInfo, layerIndex);
-        this.Interrupt();
-        //this.currDecision = null;
-    }//OnStateExit
-
-
-    public virtual void CheckDecisions() {
-        int size = Decisions.Length;
-        if (NPC == null) {
-#if UNITY_EDITOR
-            Debug.LogWarning("NPC controller for " + this.name + " is null!");
-#endif
-            return;
-        }
-        for (int i = 0; i < size; i++) {
-            if (Decisions[i] == null) {
-#if UNITY_EDITOR
-                Debug.LogWarning("Decision " + i + " is null!");
-#endif
-                continue;
-            }
-            Decisions[i].Decide(NPC);
-        }//for
-    }//CheckDecisions
-
-}//AIBase
+        }//AIBase
+    }//namespace AIState
+}//namespace

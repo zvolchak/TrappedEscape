@@ -4,13 +4,21 @@ using UnityEngine;
 
 public class PathDebugger : MonoBehaviour {
 
+    public static PathDebugger Instance;
+    public int MaxTargetPoints = 1;
+
     public List<GridNode> TargetPoints;
     public List<GridNode> Path;
 
     private Pathfinder _pathFinder;
 
+    public delegate void OnPointSelected(List<GridNode> path);
+    public OnPointSelected EOnPointSelected;
+
 
     public void Start() {
+        if(Instance == null) Instance = this;
+        else return;
         _pathFinder = GetComponent<Pathfinder>();
     }//Start
 
@@ -38,39 +46,40 @@ public class PathDebugger : MonoBehaviour {
             return;
         }
 
-        if (TargetPoints.Count == 2) {
-            TargetPoints.RemoveAt(1);
+        if (TargetPoints.Count >= MaxTargetPoints) {
+            TargetPoints.RemoveAt(TargetPoints.Count - 1);
         }
 
         TargetPoints.Add(node);
+        this.EOnPointSelected?.Invoke(this.TargetPoints);
     }//AddPoint
 
 
-    public void OnDrawGizmos() {
-        if(TargetPoints == null || TargetPoints.Count == 0)
-            return;
+    //public void OnDrawGizmos() {
+    //    if(TargetPoints == null || TargetPoints.Count == 0)
+    //        return;
 
-        for (int i = 0; i < TargetPoints.Count; i++) {
-            GridNode node = TargetPoints[i];
-            Gizmos.color = Color.red;
-            Gizmos.DrawSphere(node.GetPosition(), 0.3f);
-        }//for
+    //    for (int i = 0; i < TargetPoints.Count; i++) {
+    //        GridNode node = TargetPoints[i];
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawSphere(node.GetPosition(), 0.3f);
+    //    }//for
 
-        if(Path == null)
-            return;
+    //    if(Path == null)
+    //        return;
 
-        for (int i = 0; i < Path.Count; i++) {
-            Gizmos.color = Color.blue;
-            if (i > 0) {
-                Gizmos.DrawLine(Path[i - 1].GetPosition(), Path[i].GetPosition());
-            }
-            if(i == Path.Count - 1)
-                continue;
+    //    for (int i = 0; i < Path.Count; i++) {
+    //        Gizmos.color = Color.blue;
+    //        if (i > 0) {
+    //            Gizmos.DrawLine(Path[i - 1].GetPosition(), Path[i].GetPosition());
+    //        }
+    //        if(i == Path.Count - 1)
+    //            continue;
 
-            GridNode node = Path[i];
-            Gizmos.DrawSphere(node.GetPosition(), 0.3f);
-        }//for
-    }//OnDrawGizmos
+    //        GridNode node = Path[i];
+    //        Gizmos.DrawSphere(node.GetPosition(), 0.3f);
+    //    }//for
+    //}//OnDrawGizmos
 
 
     public GridSystem Grid => GridSystem.Instance;
