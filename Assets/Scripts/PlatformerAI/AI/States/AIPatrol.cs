@@ -2,63 +2,80 @@
 using GHPlatformerControls;
 using UnityEngine;
 
-public class AIPatrol : AIBase {
+namespace GHAI {
+    namespace AIStates {
+        public class AIPatrol : AIBase {
 
-    public float WaitTimeAtPoint = 0f;
+            public float WaitTimeAtPoint = 0f;
 
-    private WaypointControl _wpCtrl;
-    private bool bHasInit = false;
-    private float timeOfArrival = -1f;
+            private WaypointControl _wpCtrl;
+            private bool bHasInit = false;
+            private float timeOfArrival = -1f;
 
 
-    public override bool Action() {
-        if (NPC.StateMachineAnimator.GetBool("IsDead"))
-            Interrupt();
-        if (!bHasInit && _wpCtrl == null) {
-            _wpCtrl = NPC.GetComponent<WaypointControl>();
-            bHasInit = true;
-        }
-        if(_wpCtrl == null)
-            return false;
+            public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
+                base.OnStateEnter(animator, stateInfo, layerIndex);
+                if (AICtrl.StateMachineAnimator.GetBool("IsDead"))
+                    Interrupt();
 
-        Transform currDest = _wpCtrl.GetActivePoint(NPC.ControlledBy.gameObject);
-        if (currDest == null) {
-            currDest = _wpCtrl.GetNext(NPC.ControlledBy.gameObject);
-            _wpCtrl.SetActivePoint(currDest);
-        }
+                if (!bHasInit && _wpCtrl == null) {
+                    _wpCtrl = AICtrl.GetComponent<WaypointControl>();
+                    bHasInit = true;
+                }
+            }//OnStateEnter
 
-        if (currDest == null)
-            return false;
-        Vector3 npcPos = NPC.ControlledBy.transform.position;
-        Vector3 direction = currDest.position - npcPos;
-        float distance = Vector3.Distance(npcPos, currDest.position);
 
-        if (distance <= 0.05f) {
-            if (this.WaitTimeAtPoint > 0) {
-                if (this.timeOfArrival < 0)
-                    this.timeOfArrival = Time.timeSinceLevelLoad;
-                if (Time.timeSinceLevelLoad - this.timeOfArrival < this.WaitTimeAtPoint)
+            public override bool Action() {
+                //if (AICtrl.StateMachineAnimator.GetBool("IsDead"))
+                //    Interrupt();
+                //if (!bHasInit && _wpCtrl == null) {
+                //    _wpCtrl = AICtrl.GetComponent<WaypointControl>();
+                //    bHasInit = true;
+                //}
+                if (_wpCtrl == null)
                     return false;
-                else
-                    this.timeOfArrival = -1f;
-            }//if waittime
 
-            currDest = _wpCtrl.GetNext(NPC.ControlledBy.gameObject);
-            _wpCtrl.SetActivePoint(currDest);
-        }// if distance
+                Transform currDest = _wpCtrl.GetActivePoint(AICtrl.ControlledBy.gameObject);
+                if (currDest == null) {
+                    currDest = _wpCtrl.GetNext(AICtrl.ControlledBy.gameObject);
+                    _wpCtrl.SetActivePoint(currDest);
+                }
 
-        MovementControls mvmt = NPC.MvmntCmp;
-        SwitchDirection dirSwitcher = NPC.DirSwitcherCmp;
-        dirSwitcher.OnSwitchDirection(Mathf.Sign(direction.x));
-        mvmt.SetVelocityX((mvmt.RunSpeed) * dirSwitcher.Direction);
+                if (currDest == null)
+                    return false;
+                Vector3 npcPos = AICtrl.ControlledBy.transform.position;
+                Vector3 direction = currDest.position - npcPos;
+                //float distance = Vector3.Distance(npcPos, currDest.position);
+                float distance = Mathf.Abs((npcPos - currDest.position).x);
+                MovementControls mvmt = AICtrl.MvmntCmp;
 
-        return true;
-    }//Action
+                if (distance <= mvmt.RunSpeed) {
+                    if (this.WaitTimeAtPoint > 0) {
+                        if (this.timeOfArrival < 0)
+                            this.timeOfArrival = Time.timeSinceLevelLoad;
+                        if (Time.timeSinceLevelLoad - this.timeOfArrival < this.WaitTimeAtPoint)
+                            return false;
+                        else
+                            this.timeOfArrival = -1f;
+                    }//if waittime
 
-    public override bool Interrupt() {
-        if(_wpCtrl != null)
-            _wpCtrl.SetActivePoint(null);
+                    currDest = _wpCtrl.GetNext(AICtrl.ControlledBy.gameObject);
+                    _wpCtrl.SetActivePoint(currDest);
+                }// if distance
 
-        return true;
-    }//Interrupt
-}//class
+                SwitchDirection dirSwitcher = AICtrl.DirSwitcherCmp;
+                dirSwitcher.OnSwitchDirection(Mathf.Sign(direction.x));
+                mvmt.SetVelocityX((mvmt.RunSpeed) * dirSwitcher.Direction);
+
+                return true;
+            }//Action
+
+            public override bool Interrupt() {
+                if (_wpCtrl != null)
+                    _wpCtrl.SetActivePoint(null);
+
+                return true;
+            }//Interrupt
+        }//class
+    }//namespace AIStates
+}//namespace

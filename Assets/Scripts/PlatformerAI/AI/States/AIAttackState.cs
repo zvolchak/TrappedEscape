@@ -2,51 +2,56 @@
 using UnityEngine;
 using GHWeaponry;
 
-///<summery>
-///</summery>
-public class AIAttackState : AIBase {
+namespace GHAI {
+    namespace AIStates {
+        ///<summery>
+        ///</summery>
+        public class AIAttackState : AIBase {
 
-    private bool bIsAttacking = false;
-
-
-    public override bool Action() {
-        NPC.MvmntCmp.SetVelocityX(0);
-        if (!bIsAttacking) {
-            NPC.StartCoroutine(ChargedAttack());
-        }
-        return false;
-    }
-
-    public override bool Interrupt() {
-        return false;
-    }
+            private bool bIsAttacking = false;
 
 
-    public IEnumerator ChargedAttack() {
-        if(!NPC.HolsterCmp.ActiveWeapon.IsCanShoot)
-            yield break;
+            public override bool Action() {
+                AICtrl.MvmntCmp.SetVelocityX(0);
+                if (!bIsAttacking) {
+                    AICtrl.StartCoroutine(ChargedAttack());
+                }
+                return false;
+            }
 
-        float distance = (NPC.transform.position - NPC.Target.transform.position).magnitude;
-        if(!NPC.IsLookingAtTarget && distance >= 3.3f)
-            NPC.DirSwitcherCmp.OnSwitchDirection();
+            public override bool Interrupt() {
+                return false;
+            }
 
-        bIsAttacking = true;
-        Holster holster = NPC.HolsterCmp;
-        Weapon weapon = holster.ActiveWeapon;
 
-        if (NPC.AnimationCmp != null) {
-            NPC.AnimationCmp.SetTrigger("ChargeAttack");
-        }
+            public IEnumerator ChargedAttack() {
+                if (!AICtrl.HolsterCmp.ActiveWeapon.IsCanShoot)
+                    yield break;
 
-        float chargeTime = weapon.Props.ChargingTime;
-        yield return new WaitForSeconds(chargeTime);
+                float distance = (AICtrl.transform.position - AICtrl.Target.transform.position).magnitude;
+                Debug.LogError("FIXME: IsLookingAtTarget definition was changed! Refactor needed...");
+                //if(!AICntrl.IsLookingAtTarget && distance >= 3.3f)
+                //    AICntrl.DirSwitcherCmp.OnSwitchDirection();
 
-        weapon.Shoot(weapon.transform.rotation);
+                bIsAttacking = true;
+                Holster holster = AICtrl.HolsterCmp;
+                Weapon weapon = holster.ActiveWeapon;
 
-        if (NPC.AnimationCmp != null) {
-            NPC.AnimationCmp.SetTrigger("Attack");
-        }
-        bIsAttacking = false;
-    }//ChargedAttack
+                if (AICtrl.AnimationCmp != null) {
+                    AICtrl.AnimationCmp.SetTrigger("ChargeAttack");
+                }
 
-}//AIAttackState
+                float chargeTime = weapon.Props.ChargingTime;
+                yield return new WaitForSeconds(chargeTime);
+
+                weapon.Shoot(weapon.transform.rotation);
+
+                if (AICtrl.AnimationCmp != null) {
+                    AICtrl.AnimationCmp.SetTrigger("Attack");
+                }
+                bIsAttacking = false;
+            }//ChargedAttack
+
+        }//AIAttackState
+    }//namespace AIStates
+}//namespace

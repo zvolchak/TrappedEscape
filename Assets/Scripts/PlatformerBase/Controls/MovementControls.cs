@@ -81,7 +81,7 @@ namespace GHPlatformerControls {
 
 
         public void Update() {
-            if (AnimationController != null) {
+            if (AnimationController != null && AnimationController.enabled) {
                 AnimationController.SetInteger("Speed", (int)Velocity.x);
             }
         }//Update
