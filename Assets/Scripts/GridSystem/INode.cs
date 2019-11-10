@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 
@@ -42,5 +43,8 @@ public interface INode{
 
     INode GetParent();
     void SetParent(INode parent);
+
+    void AddNeighbour(List<INode> node);
+    List<INode> GetNeighbours();
 
 }//class INode

@@ -104,4 +104,12 @@ public class VirtualNode : INode{
         }//for
     }//OnDrawGizmos
 
+
+    public void AddNeighbour(List<INode> node) {
+        throw new System.NotImplementedException();
+    }
+
+    public List<INode> GetNeighbours() {
+        throw new System.NotImplementedException();
+    }
 }//class

@@ -47,7 +47,7 @@ namespace GHTriggers {
             if(this.climbersCash[collision] == null)
                 return;
 
-            this.climbersCash[collision].UnsetLadder(this);
+            this.climbersCash[collision].StopClimbing(this);
         }//OnTriggerExit2D
 
     }//class

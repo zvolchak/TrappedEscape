@@ -17,6 +17,7 @@ namespace GHAI {
         public Holster HolsterCmp;
         public SprintControls SprintCmp;
         public AActor2D Target;
+        public LadderClimber LadderClimberCmp;
 
         private Animator _animator;
         public Collider2D ColliderCmp { get; private set; }
@@ -33,6 +34,7 @@ namespace GHAI {
             }
 
             ColliderCmp = GetComponentInChildren<Collider2D>();
+            LadderClimberCmp = GetComponentInParent<LadderClimber>();
 
             DamagableCmp = ControlledBy.DamagableCmp;
             DamagableCmp.EOnDamageTaken += OnDamageTaken;
@@ -56,8 +58,11 @@ namespace GHAI {
 
             if (this.Target == null)
                 this.Target = Player.Instance;
+            float visionDir = (this.transform.position - this.Target.transform.position).normalized.x;
+            if (-visionDir != DirSwitcherCmp.Direction)
+                return false;
 
-            var distance = (this.transform.position - this.Target.transform.position).magnitude;
+            float distance = (this.transform.position - this.Target.transform.position).magnitude;
             if (Props == null) {
 #if UNITY_EDITOR
                 Debug.LogError("AIProps of the AIController for " + this.name + " not set!");

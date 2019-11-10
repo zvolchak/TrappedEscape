@@ -16,7 +16,10 @@ namespace GHPlatformerControls {
         public float GroundDistanceCheck = 0f;
 
         public bool IsClimbing { get; private set; }
-        public Ladder ladder;
+        /// <summary>
+        ///  A Ladder cmp with which this actor can interuct with.
+        /// </summary>
+        public Ladder ActiveLadder { get; private set; }
 
         private string[] raycastPlatformTags;
 
@@ -58,12 +61,17 @@ namespace GHPlatformerControls {
             if(newLadder == null)
                 return;
 
-            this.ladder = newLadder;
+            this.ActiveLadder = newLadder;
         }//OnTriggerEnter2D
 
 
-        public virtual void UnsetLadder(Ladder caller) {
-            if (caller != null && caller != this.ladder)
+        /// <summary>
+        ///  Stop using ladder by setting ActiveLadder to null and reseting
+        /// Actor's gravity.
+        /// </summary>
+        /// <param name="caller"></param>
+        public virtual void StopClimbing(Ladder caller) {
+            if (caller != null && caller != this.ActiveLadder)
                 return;
 
             if (IsClimbing) {
@@ -74,25 +82,36 @@ namespace GHPlatformerControls {
             IsClimbing = false;
             this.enableRaycastIgnoreTags(false);
 
-            this.EOnLadderUnset?.Invoke(this.ladder);
+            this.EOnLadderUnset?.Invoke(this.ActiveLadder);
             
-            this.ladder = null;
+            this.ActiveLadder = null;
         }//OnTriggerExit2D
 
 
-        public virtual void OnClimb() {
+        /// <summary>
+        ///  Called every Update cycle to "move" actor through the ladder.
+        /// </summary>
+        /// <param name="axisInput"></param>
+        /// <param name="isPressed"></param>
+        public virtual void OnClimb(float axisInput=float.NegativeInfinity, bool isPressed=false) {
             if (this.Actor == null)
                 return;
-            if (this.ladder == null)
+            if (this.ActiveLadder == null)
                 return;
 
             Gravity gravity = this.Actor.Gravity;
             CollisionDetection cd = this.Actor.CollisionDetector;
 
-            //FIXME: Move Input from global to objects input listener  
-            float vertInput = Input.GetAxis(InputName);
+            //FIXME: Move Input from global to objects input listener
+            float vertInput = 0;
+            if (axisInput == float.NegativeInfinity)
+                vertInput = Input.GetAxis(InputName);
+            else
+                vertInput = axisInput;
+
             vertInput = vertInput != 0 ? Mathf.Sign(vertInput) * 1 : 0;
-            bool isPressed = Input.GetButtonDown(InputName);
+            if (axisInput == float.NegativeInfinity)
+                isPressed = Input.GetButtonDown(InputName);
             
             //FIXME: !!! Dont snap to Ladder when Down pressed on Solid ground. !!!
 
@@ -101,8 +120,8 @@ namespace GHPlatformerControls {
             if (!IsClimbing && isPressed) {
                 if (vertInput == 0)
                     return;
-                this.EOnLadderUsed?.Invoke(this.ladder);
-                this.SnapToLadder(this.ladder);
+                this.EOnLadderUsed?.Invoke(this.ActiveLadder);
+                this.SnapToLadder(this.ActiveLadder);
                 IsClimbing = true;
             }//if not contains
 
@@ -165,7 +184,7 @@ namespace GHPlatformerControls {
                 return;
 
             Vector3 targetPos = this.Actor.transform.position;
-            Vector3 ladderPos = this.ladder.transform.position;
+            Vector3 ladderPos = this.ActiveLadder.transform.position;
             //Snap target to the X position of the ladder when climbing
             this.Actor.transform.position = new Vector3(ladderPos.x,
                                                         targetPos.y,
@@ -241,7 +260,7 @@ namespace GHPlatformerControls {
         }//updateRaycastIgnoreTags
 
 
-        public bool IsOnLadder => this.ladder != null;
+        public bool IsOnLadder => this.ActiveLadder != null;
 
         /// <summary>
         ///  Return True if CollisionDetection IgnoreTags has been altered;
