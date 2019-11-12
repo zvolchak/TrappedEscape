@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class GridNode : MonoBehaviour, INode{
 
-    public List<INode> Connections;
+    public List<GridNode> Connections;
     public int MovementCost = 1;
 
     private bool bIsWalkable = true;
@@ -21,8 +21,12 @@ public class GridNode : MonoBehaviour, INode{
 
 
     public void Start() {
+        List<INode> nodes = new List<INode>();
+        for (int i = 0; i < Connections.Count; i++) {
+            nodes.Add(Connections[i]);
+        }
         if (Connections != null)
-            this.AddNeighbour(Connections);
+            this.AddNeighbour(nodes);
     }//Start
 
 
@@ -34,7 +38,8 @@ public class GridNode : MonoBehaviour, INode{
         if (this.Neighbours.Contains(node))
             return;
 
-        this.Neighbours.Add(node);
+        if(!this.Neighbours.Contains(node))
+            this.Neighbours.Add(node);
         //Add Self to the newlly added neighbour for the "cross reference".
         node.AddNeighbour(new List<INode>(new INode[] { this }));
     }//AddNeighbour
@@ -136,8 +141,8 @@ public class GridNode : MonoBehaviour, INode{
             INode node = this.Neighbours[i];
             if (node == null)
                 continue;
-            //Gizmos.color = Color.green;
-            //Gizmos.DrawLine(this.transform.position, node.GetPosition());
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(this.transform.position, node.GetPosition());
         }//for
     }//OnDrawGizmos
 

@@ -1392,7 +1392,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: c474ab4178372dc49ba9bd398501e0be, type: 2}
   Props: {fileID: 11400000, guid: 28a3c8c38b5ec1d43aa8578e7493ccb8, type: 2}
   AICtrl: {fileID: 0}
-  WaitTimeAtPoint: 2
 --- !u!1101 &3913542914964374377
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

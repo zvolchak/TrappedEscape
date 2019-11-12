@@ -103,7 +103,7 @@ public class AActor2D : MonoBehaviour {
         HandleVelocity(ref deltaMovement);
         MvmntCmp.SetVelocity(deltaMovement);
 
-        if (this.IsGrounded) {
+        if (this.IsGrounded && !prevGroundState) {
             IsLanded = true;
             this.EOnLanded?.Invoke();
         }//if landed

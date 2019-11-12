@@ -2,12 +2,13 @@
 using GHAbilities;
 using GHPlatformerControls;
 using GHPhysics;
+using GHGameManager;
 
 /// <summary>
 ///  A "master" class for accessing and controlling players' operations.
 /// It is a sort of a "manager" class.
 /// </summary>
-[RequireComponent(typeof(CollisionDetection), typeof(MovementControls))]
+[RequireComponent(typeof(CollisionDetection), typeof(MovementControls), typeof(InputManager))]
 public class Player : AActor2D {
 
     public static Player Instance;
@@ -29,6 +30,7 @@ public class Player : AActor2D {
     //private CollisionDetection _collisionDetection;
     private CharacterAnimator _charAnimator;
     private LadderClimber _ladderClimber;
+    private InputManager _inputMngr;
 
     private bool bIsCanMove;
     //private bool bIsInAir;
@@ -53,6 +55,7 @@ public class Player : AActor2D {
         _dropthrough = GetComponent<PlatformDropthrough>();
         _charAnimator = GetComponent<CharacterAnimator>();
         _ladderClimber = GetComponent<LadderClimber>();
+        _inputMngr = GetComponent<InputManager>();
 
         bIsCanMove = true;
         this.groundedTimeout = 0f;
@@ -95,7 +98,8 @@ public class Player : AActor2D {
         if (!IsCanControl)
             return;
 
-        float horizontalInput = Input.GetAxisRaw("Horizontal");
+        //float horizontalInput = Input.GetAxisRaw("Horizontal");
+        float horizontalInput = _inputMngr.GetHorizontalAxis();
 
         this.Abilities.HandleJumping(ref deltaMovement);
 

@@ -27,10 +27,6 @@ namespace GHAI {
 
             public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
                 base.OnStateEnter(animator, stateInfo, layerIndex);
-                //Vector3 from = _wpCtrl.patrolPoints[0].transform.position;
-                //Vector3 to = _wpCtrl.patrolPoints[1].transform.position;
-                //var path = _pathFinder.FindPath(from, to);
-                //_wpCtrl.SetPatrolPoints(path);
                 this.init();
             }//OnStateEnter
 
@@ -54,9 +50,10 @@ namespace GHAI {
                 wpCtrl.FlipIterationIndex();
 
                 if (!bUsePatrolPath) {
+                    var t = wpCtrl.GetActivePoint();
                     wpCtrl.ResetPatrolPoints();
                     bUsePatrolPath = true;
-                    this.target = wpCtrl.GetNext().transform;
+                    this.target = wpCtrl.GetNext(t).transform;
                 }
             }//OnLastPointReached
 

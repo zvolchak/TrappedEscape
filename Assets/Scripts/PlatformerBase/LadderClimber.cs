@@ -22,12 +22,11 @@ namespace GHPlatformerControls {
         public Ladder ActiveLadder { get; private set; }
 
         private string[] raycastPlatformTags;
+        private Vector3 posOfStartClimb;
 
         /* ---------------------- EVENTS ---------------------- */
 
         public delegate void OnLadderUsed(Ladder l);
-        public delegate void OnLadderUnset(Ladder l);
-
 
         /// <summary>
         ///  Called when character starts using ladder.
@@ -39,7 +38,7 @@ namespace GHPlatformerControls {
         ///  Called when character stops using ladder.
         /// Signature: <Ladder>
         /// </summary>
-        public OnLadderUnset EOnLadderUnset;
+        public OnLadderUsed EOnLadderUnset;
 
      /* ---------------------- ---------------------- ---------------------- */
 
@@ -115,29 +114,37 @@ namespace GHPlatformerControls {
             
             //FIXME: !!! Dont snap to Ladder when Down pressed on Solid ground. !!!
 
-            //This will(should) be called Once per Ladder usage. Then dropped
-            //off the ladder and jumped on it again, this will be called.
+            //This will(should) be called Once per Ladder usage when dropped
+            //off the ladder and jumped on it again.
             if (!IsClimbing && isPressed) {
                 if (vertInput == 0)
                     return;
-                this.EOnLadderUsed?.Invoke(this.ActiveLadder);
+                this.enableRaycastIgnoreTags(true);
                 this.SnapToLadder(this.ActiveLadder);
                 IsClimbing = true;
+                this.posOfStartClimb = this.Actor.transform.position;
+
+                this.EOnLadderUsed?.Invoke(this.ActiveLadder);
             }//if not contains
 
             if (!IsClimbing)
                 return;
 
-            if (cd != null) {
-                //take the middle ray to check the ground
-                var ray = cd.VerticalRayMeta[cd.VerticalRayMeta.Length / 2].Ray;
-                if (vertInput < 0) {
-                    if (ray) this.enableRaycastIgnoreTags(true);
-                    else this.enableRaycastIgnoreTags(false);
-                } else {
-                    this.enableRaycastIgnoreTags(false);
-                }//if
-            }//if cd
+            //if (cd != null) {
+            //    Debug.Log(this.Actor.IsGrounded);
+            //    RaycastHit2D ray = cd.VerticalRayMeta[cd.VerticalRayMeta.Length / 2].Ray;
+            //    //Vector3 deltaMovement = Vector3.up * axisInput;
+            //    //if (!ray) {
+            //    //    ray = cd.CastVerticalRay(deltaMovement.y, cd.VerticalRayMeta.Length / 2).Ray;
+            //    //}
+
+            //    if (vertInput < 0) {
+            //        if (ray) this.enableRaycastIgnoreTags(true);
+            //        else this.enableRaycastIgnoreTags(false);
+            //    } else {
+            //        this.enableRaycastIgnoreTags(false);
+            //    }//if
+            //}//if cd
 
             if (gravity != null && vertInput != 0)
                 gravity.SetGravity(0);
@@ -152,22 +159,33 @@ namespace GHPlatformerControls {
 
             MovementControls mvmnt = this.Actor.MvmntCmp;
             if (this.Actor.MvmntCmp == null) {
-#if UNITY_EDITOR
-                Debug.LogWarning(this.Actor.name + " has no MovementControls to use the ladder!");
-#endif
+                #if UNITY_EDITOR
+                    Debug.LogWarning(this.Actor.name + " has no MovementControls to use the ladder!");
+                #endif
                 return false;
             }
 
-            //When Going Up - no need to check ground.
+            //Check ground only when going Down..
             if (!IsCanMoveOnLadder && inputAxisValue <= 0) {
                 float direction = Mathf.Abs(inputAxisValue) > 0 ? 1 : 0;
                 if (mvmnt.Velocity.x != 0)
                     direction = 1;
 
                 bool isGrounded = GetActorGrounded(-GroundDistanceCheck * direction);
-                if(!isGrounded)
+                if (!isGrounded)
                     mvmnt.SetVelocityX(0);
+                else {
+                    //this.StopClimbing(this.ActiveLadder);
+                }
             }
+
+            if (this.Actor.IsGrounded) {
+                float climbedDistance = Vector3.Distance(this.posOfStartClimb, this.Actor.transform.position);
+                if (climbedDistance >= 1f) {
+                    StopClimbing(this.ActiveLadder);
+                }
+            }
+
             mvmnt.SetVelocityY(inputAxisValue * Speed);
 
             return true;
@@ -209,7 +227,7 @@ namespace GHPlatformerControls {
                 return true;
 
             if(distance != 0) {
-                RaycastMeta rayMeta = cd.VerticalRay(distance, cd.Props.VerticalRays / 2);
+                RaycastMeta rayMeta = cd.CastVerticalRay(distance, cd.Props.VerticalRays / 2);
                 return rayMeta.Ray;
             }
 

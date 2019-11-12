@@ -37,38 +37,14 @@ public class GridSystem : MonoBehaviour{
             Gizmos.DrawWireCube(GridBounds.center, new Vector3(GridBounds.size.x, GridBounds.size.y, 0.2f));
             Gizmos.color = Color.gray;
         }
-
         if (Grid == null)
             return;
 
-        //INode actorNode = null;
-        //if (GameState.Instance != null) {
-        //    if(GameState.Instance.SelectedActor != null)
-        //        actorNode = GetNodeFromWorld(GameState.Instance.SelectedActor.Position);
-        //}
         foreach (INode node in Grid) {
             if(node == null)
                 continue;
-            //bool isActor = false;
-
-            //if (actorNode != null && actorNode == node) {
-            //    Gizmos.color = DebugProps.ActorColor;
-            //    isActor = true;
-            //}
-
-            //if (node.GetWalkable())
-            //    Gizmos.color = DebugProps.CellColor;
-
-            //if (DebugProps.IsDrawPath && !isActor && TracePath != null) {
-            //    if (TracePath.Contains(node))
-            //        Gizmos.color = DebugProps.PathColor;
-            //}
-
-            //if (!isActor && !node.GetWalkable())
-            //    Gizmos.color = DebugProps.CollisionColor;
-
             Gizmos.color = Color.green;
-            Gizmos.DrawSphere(node.GetPosition(), 0.15f);
+            Gizmos.DrawWireCube(node.GetPosition(), Vector3.one * 0.2f);
         }//foreach
     }//OnDrawGizmos
 
@@ -128,7 +104,7 @@ public class GridSystem : MonoBehaviour{
                 if (tile != null)
                     continue;
 
-                //tile = new GameObject().AddComponent<INode>();
+                //tile = new INode();
                 tile.SetWalkable(false);
                 tile.SetCoord(w, h);
                 tile.SetPosition(this.GetWorldFromNode(w, h));
@@ -212,7 +188,17 @@ public class GridSystem : MonoBehaviour{
 
     public INode GetNodeFromWorld(Vector3 worldPoint) {
         int[] coords = CoordsFromWorld(worldPoint);
-        return Grid[coords[0], coords[1]];
+        INode node = Grid[coords[0], coords[1]];
+        if (node == null) {
+            //Try to find the lowest valid Node at return that.
+            for (int y = coords[1]; y >= 0; y--) {
+                int x = coords[0];
+                if (Grid[x, y] != null)
+                    return Grid[x,y];
+            }//for
+        }//if node
+
+        return node;
     }//GetNodeFromWorld
 
 
@@ -235,14 +221,6 @@ public class GridSystem : MonoBehaviour{
         x = Mathf.Abs(x);
         y = Mathf.Abs(y);
         return new int[] { x, y };
-        //float percentX = (worldPoint.x + WorldSize.x / 2) / WorldSize.x;
-        //float percentY = (worldPoint.y + WorldSize.y / 2) / WorldSize.y;
-        //percentX = Mathf.Clamp01(percentX);
-        //percentY = Mathf.Clamp01(percentY);
-
-        //int x = Mathf.RoundToInt((GridSizeX - 1) * percentX);
-        //int y = Mathf.RoundToInt((GridSizeY - 1) * percentY);
-        //return new int[] { x, y };
     }//GetWorldFromNode
 
 

@@ -82,7 +82,7 @@ public class CollisionDetection : MonoBehaviour {
     /// <param name="positionIndex">Position of the ray relative to Number of
     ///                             rays count set in Props.</param>
     /// <returns>Casted ray meta data.</returns>
-    public RaycastMeta HorizontalRay(float rayLength, int positionIndex) {
+    public RaycastMeta CastHorizontalRay(float rayLength, int positionIndex) {
         float directionX = Mathf.Sign(rayLength);
         rayLength = Mathf.Abs(rayLength) + SKINWIDTH;
 
@@ -111,7 +111,7 @@ public class CollisionDetection : MonoBehaviour {
 
 
     /// <summary>
-    ///  Cast Vertically ray with respect to "rayLength" sign. SKINWIDTH is added 
+    ///  Cast Vertically (down/up) ray with respect to "rayLength" sign. SKINWIDTH is added 
     /// to the rayLength here.
     /// </summary>
     /// <param name="rayLength">Length of the ray and the direction (based of
@@ -119,7 +119,7 @@ public class CollisionDetection : MonoBehaviour {
     /// <param name="positionIndex">Position of the ray relative to Number of
     ///                             rays count set in Props.</param>
     /// <returns>Casted ray meta data.</returns>
-    public RaycastMeta VerticalRay(float rayLength, int positionIndex) {
+    public RaycastMeta CastVerticalRay(float rayLength, int positionIndex) {
         float directionY = Mathf.Sign(rayLength); //current movement direction (up/down)
         rayLength = Mathf.Abs(rayLength) + SKINWIDTH;
 
@@ -151,7 +151,7 @@ public class CollisionDetection : MonoBehaviour {
 
 
     /// <summary>
-    ///  Raycast horizontally with respect to deltaMovement.
+    ///  Raycast horizontally (left/right) with respect to deltaMovement.
     /// This should be called every frame.
     /// </summary>
     public void HorizontalCollisions(ref Vector3 deltaMovement) {
@@ -162,7 +162,7 @@ public class CollisionDetection : MonoBehaviour {
             this.HorizontalRayMeta = new RaycastMeta[this.Props.HorizontalRays];
 
         for (int i = 0; i < this.Props.HorizontalRays; i++) {
-            RaycastMeta meta = this.HorizontalRay(deltaMovement.x, i);
+            RaycastMeta meta = this.CastHorizontalRay(deltaMovement.x, i);
 
             if(this.HorizontalRayMeta[i] == null)
                 this.HorizontalRayMeta[i] = new RaycastMeta();
@@ -216,7 +216,7 @@ public class CollisionDetection : MonoBehaviour {
 
         int numOfHits = 0;
         for (int i = 0; i < this.Props.VerticalRays; i++) {
-            RaycastMeta meta = this.VerticalRay(deltaMovement.y, i);
+            RaycastMeta meta = this.CastVerticalRay(deltaMovement.y, i);
 
             //Update Global ray Meta.
             if(this.VerticalRayMeta[i] == null)

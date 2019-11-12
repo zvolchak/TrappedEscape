@@ -277,7 +277,7 @@ namespace GHMisc {
                     //continue;
 
                 GridNode node = this.PatrolPath[i];
-                Gizmos.DrawSphere(node.GetPosition(), 0.3f);
+                Gizmos.DrawSphere(node.GetPosition(), 0.2f);
             }//for
         }//OnDrawGizmos
 

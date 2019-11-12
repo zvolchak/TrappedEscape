@@ -29,7 +29,6 @@ namespace GHAI {
                     Vector3 from = this.AICtrl.ControlledBy.transform.position;
                     this.huntPath = _pathFinder.FindPath(from, distressPoint);
                     if (this.huntPath == null) {
-                        Debug.Log("????????????????");
                         //this.Interrupt();
                         //return;
                     }

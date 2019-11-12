@@ -1,5 +1,6 @@
 ﻿using GHMisc;
 using GHPlatformerControls;
+using GHTriggers;
 using UnityEngine;
 
 namespace GHAI {
@@ -14,7 +15,8 @@ namespace GHAI {
             protected bool bHasInit = false;
             protected bool bIsAtTarget = false;
             protected float timeOfArrival = -1f;
-
+            
+            private float climbDir = 0f;
 
             public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
                 base.OnStateEnter(animator, stateInfo, layerIndex);
@@ -34,12 +36,6 @@ namespace GHAI {
                     bHasInit = true;
                 }
 
-                //Vector3 from = _wpCtrl.patrolPoints[0].transform.position;
-                //Vector3 to = _wpCtrl.patrolPoints[1].transform.position;
-                //var path = _pathFinder.FindPath(from, to);
-                //_wpCtrl.SetPatrolPoints(path);
-                //this.target = _wpCtrl.patrolPoints[0].transform;
-
                 _wpCtrl.EOnPointReached -= this.OnPointReached;
                 _wpCtrl.EOnFirstPointReached -= this.OnFirstPointReached;
                 _wpCtrl.EOnLastPointReached -= this.OnLastPointReached;
@@ -47,6 +43,9 @@ namespace GHAI {
                 _wpCtrl.EOnPointReached += this.OnPointReached;
                 _wpCtrl.EOnFirstPointReached += this.OnFirstPointReached;
                 _wpCtrl.EOnLastPointReached += this.OnLastPointReached;
+
+                AICtrl.LadderClimberCmp.EOnLadderUnset -= OffTheLadder;
+                AICtrl.LadderClimberCmp.EOnLadderUnset += OffTheLadder;
             }//OnStateEnter
 
 
@@ -72,36 +71,53 @@ namespace GHAI {
             public virtual bool GoToTarget(Transform target) {
                 if (this.target == null)
                     return false;
-
+                BoxCollider2D box = AICtrl.ControlledBy.ColliderCmp as BoxCollider2D;
+                Vector2 size = box.size;
                 float direction = AICtrl.DirSwitcherCmp.Direction;
                 Vector2 distanceVector = (target.position - AICtrl.transform.position);
                 float distance = Vector2.Distance(AICtrl.transform.position, target.position);
-                if (!AICtrl.IsLookingAtTarget(target) && distance >= AICtrl.MvmntCmp.Velocity.x) {
+                //Vector2 deltaMovement = Vector2.right * AICtrl.MvmntCmp.RunSpeed * direction;
+                Vector3 deltaMovement = AICtrl.MvmntCmp.Velocity;
+                if (deltaMovement.x > distance) {
+                    deltaMovement.x = distance;
+                }
+                if (!AICtrl.IsLookingAtTarget(target) &&
+                        Mathf.Abs(distanceVector.x) >= (size.x/2) &&
+                        !AICtrl.LadderClimberCmp.IsClimbing) {
                     AICtrl.DirSwitcherCmp.OnSwitchDirection();
                     direction = AICtrl.DirSwitcherCmp.Direction;
                 }
-                Vector2 deltaMovement = Vector2.right * AICtrl.MvmntCmp.RunSpeed * direction;
 
-                var box = AICtrl.ControlledBy.ColliderCmp as BoxCollider2D;
-                var size = box.size;
 
-                Debug.DrawRay(AICtrl.transform.position,
-                    Vector2.down * (Mathf.Abs(deltaMovement.y) + size.y / 2),
-                    Color.green);
-
-                Debug.DrawRay(AICtrl.transform.position,
-                    Vector2.right * (Mathf.Abs(deltaMovement.x)),
-                    Color.green);
-
-                bool isAtX = Mathf.Abs(distanceVector.x) <= Mathf.Abs(deltaMovement.x);
+                bool isAtX = Mathf.Abs(distanceVector.x) <= 0.2f;
                 bool isAtY = false;
-                if (distanceVector.y <= 0)
-                    isAtY = Mathf.Abs(distanceVector.y) <= Mathf.Abs(deltaMovement.y) + size.y / 2;
+                if (distanceVector.y <= 0 && !AICtrl.LadderClimberCmp.IsClimbing)
+                    isAtY = Mathf.Abs(distanceVector.y) <= size.y / 2;
+                else if (distanceVector.y <= 0 && AICtrl.LadderClimberCmp.IsClimbing) {
+                    isAtY = AICtrl.ControlledBy.IsGrounded;
+                }
+
+                if (!isAtX)
+                    deltaMovement.x = AICtrl.MvmntCmp.RunSpeed * direction;
+                else
+                    deltaMovement.x = 0;
+
+                //FIXME: this shouldn't be here. Should be called first by Actor,
+                //but it doesn't (or it is too late).
+                AICtrl.ControlledBy.CollisionDetector.Move(ref deltaMovement);
+
+                if (isAtX && !isAtY) {
+                    if (climbDir == 0)
+                        climbDir = Mathf.Sign(distanceVector.normalized.y);
+                    if (AICtrl.LadderClimberCmp.IsOnLadder) {
+                        UseLadder(ref deltaMovement, climbDir);
+                    }
+                }
 
                 if (AICtrl.LadderClimberCmp.IsClimbing)
                     isAtY = false;
-                if (isAtX && !isAtY)
-                    UseLadder(ref deltaMovement, Mathf.Sign(distanceVector.normalized.y));
+                else
+                    climbDir = 0f;
 
                 AICtrl.MvmntCmp.SetVelocity(deltaMovement);
 
@@ -114,7 +130,7 @@ namespace GHAI {
             }//GoToTarget
 
 
-            public void UseLadder(ref Vector2 deltaMovement, float dir) {
+            public virtual void UseLadder(ref Vector3 deltaMovement, float dir) {
                 LadderClimber climber = AICtrl.LadderClimberCmp;
                 if (climber == null)
                     return;
@@ -122,10 +138,18 @@ namespace GHAI {
                 if (!climber.IsOnLadder)
                     return;
 
-                climber.OnClimb(1, !climber.IsClimbing);
-                deltaMovement.x = 0f;
-                deltaMovement.y = AICtrl.MvmntCmp.Velocity.y;
+                //deltaMovement.x = 0f;
+                //deltaMovement.y = climber.Speed * dir;
+
+                climber.OnClimb(dir, !climber.IsClimbing);
+                deltaMovement = AICtrl.MvmntCmp.Velocity;
+                //deltaMovement.y = AICtrl.MvmntCmp.Velocity.y;
             }//UserLadder
+
+
+            public void OffTheLadder(Ladder l) {
+                AICtrl.MvmntCmp.SetVelocityY(0);
+            }
 
 
             public override bool Interrupt() {
@@ -141,12 +165,39 @@ namespace GHAI {
                 _wpCtrl.EOnFirstPointReached -= this.OnFirstPointReached;
                 _wpCtrl.EOnLastPointReached -= this.OnLastPointReached;
 
+                AICtrl.LadderClimberCmp.EOnLadderUnset -= OffTheLadder;
                 return true;
             }//Interrupt
 
 
+            /// <summary>
+            ///  Is a WaypointControl event subscribtion callback.
+            /// Called when actor reaches a waypoint node.
+            /// </summary>
+            /// <param name="wpCtrl">A WaypointControl cmp that has called this
+            ///                 function or the way that controls the waypoint
+            ///                 that has been reached.
+            /// </param>
             protected virtual void OnPointReached(WaypointControl wpCtrl) {}
+
+            /// <summary>
+            ///  Is a WaypointControl event subscribtion callback.
+            /// Called when actor reaches a Last in its path waypoint node.
+            /// </summary>
+            /// <param name="wpCtrl">A WaypointControl cmp that has called this
+            ///                 function or the way that controls the waypoint
+            ///                 that has been reached.
+            /// </param>
             protected virtual void OnLastPointReached(WaypointControl wpCtrl) {}
+
+            /// <summary>
+            ///  Is a WaypointControl event subscribtion callback.
+            /// Called when actor reaches a First in its path waypoint node.
+            /// </summary>
+            /// <param name="wpCtrl">A WaypointControl cmp that has called this
+            ///                 function or the way that controls the waypoint
+            ///                 that has been reached.
+            /// </param>
             protected virtual void OnFirstPointReached(WaypointControl wpCtrl) {}
 
         }//AIChase

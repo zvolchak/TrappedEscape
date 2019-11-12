@@ -3,12 +3,19 @@
 namespace GHGameManager {
     public class InputManager : MonoBehaviour {
 
-        public void Start() {
-        }//Start
+        private float horizontalAxis = float.NegativeInfinity;
 
 
-        public void Update() {
-        }//Update
+        public float GetHorizontalAxis() {
+            return Input.GetAxisRaw("Horizontal");
+        }//GetHo
+
+
+        public void SetHorizontalAxis(float val) {
+            val = val > 1 ? 1 : val;
+            val = val < -1 ? -1 : val;
+            this.horizontalAxis = val;
+        }//SetHorizontalAxis
 
 
     }//InputManager
