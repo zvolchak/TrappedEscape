@@ -14,7 +14,7 @@ public class GridSystem : MonoBehaviour{
 
     //public List<INode> TracePath { get; set; }
 
-    public List<GridNode> allNodes = new List<GridNode>();
+    public List<INode> allNodes = new List<INode>();
     public Rect GridBounds = new Rect();
 
 
@@ -37,44 +37,20 @@ public class GridSystem : MonoBehaviour{
             Gizmos.DrawWireCube(GridBounds.center, new Vector3(GridBounds.size.x, GridBounds.size.y, 0.2f));
             Gizmos.color = Color.gray;
         }
-
         if (Grid == null)
             return;
 
-        //INode actorNode = null;
-        //if (GameState.Instance != null) {
-        //    if(GameState.Instance.SelectedActor != null)
-        //        actorNode = GetNodeFromWorld(GameState.Instance.SelectedActor.Position);
-        //}
         foreach (INode node in Grid) {
             if(node == null)
                 continue;
-            //bool isActor = false;
-
-            //if (actorNode != null && actorNode == node) {
-            //    Gizmos.color = DebugProps.ActorColor;
-            //    isActor = true;
-            //}
-
-            //if (node.GetWalkable())
-            //    Gizmos.color = DebugProps.CellColor;
-
-            //if (DebugProps.IsDrawPath && !isActor && TracePath != null) {
-            //    if (TracePath.Contains(node))
-            //        Gizmos.color = DebugProps.PathColor;
-            //}
-
-            //if (!isActor && !node.GetWalkable())
-            //    Gizmos.color = DebugProps.CollisionColor;
-
             Gizmos.color = Color.green;
-            Gizmos.DrawSphere(node.GetPosition(), 0.15f);
+            Gizmos.DrawWireCube(node.GetPosition(), Vector3.one * 0.2f);
         }//foreach
     }//OnDrawGizmos
 
 
     public void GenerateGrid() {
-        this.allNodes = new List<GridNode>(GetComponentsInChildren<GridNode>());
+        this.allNodes = new List<INode>(GetComponentsInChildren<INode>());
         Rect box = new Rect();
         box.xMin = float.PositiveInfinity;
         box.xMax = float.NegativeInfinity;
@@ -90,34 +66,58 @@ public class GridSystem : MonoBehaviour{
         height = height > 0 ? height : 1;
         width = width > 0 ? width : 1;
 
-        Grid = new GridNode[height, width];
+        this.Grid = new INode[height, width];
 
         for (int i = 0; i < this.allNodes.Count; i++) {
-            GridNode tile = this.allNodes[i];
-            int[] nodeCoord = this.CoordsFromWorld(tile.transform.position);
+            INode tile = this.allNodes[i];
+            tile.SetWalkable(true);
+            int[] nodeCoord = this.CoordsFromWorld(tile.GetPosition());
             int x = nodeCoord[0];
             int y = nodeCoord[1];
 
             //FIXME: DO SOMETHING ABOUT THIS POSITOIN OVERWRITE STUFF!!
-            if (Grid[x,y] != null) {
+            if (this.Grid[x,y] != null) {
                 string msg = string.Format("Grid node at {0}:{1} is taken! Will be overwritten!",
                     x, y);
-                Debug.LogWarning(msg);
+                //Debug.LogWarning(msg);
             }
 
             tile.SetCoord(x, y);
-            Grid[x,y] = tile;
+            this.Grid[x,y] = tile;
         }//for
 
+        //this.Grid = this.fillEmpty(this.Grid, height, width);
+
+        //Set nodes' neighbours
         for (int i = 0; i < this.allNodes.Count; i++) {
-            GridNode tile = this.allNodes[i];
-            List<GridNode> neighbours = GetNeighbours(tile);
+            INode tile = this.allNodes[i];
+            List<INode> neighbours = GetNeighbours(tile);
             tile.AddNeighbour(neighbours);
         }//for
     }//GenerateGrid
 
 
-    protected Rect computeWorldBounds(List<GridNode> nodes) {
+    protected INode[,] fillEmpty(INode[,] grid, int height, int width) {
+        for (int h = 0; h < height; h++) {
+            for (int w = 0; w < width; w++) {
+                INode tile = grid[h,w];
+                if (tile != null)
+                    continue;
+
+                //tile = new INode();
+                tile.SetWalkable(false);
+                tile.SetCoord(w, h);
+                tile.SetPosition(this.GetWorldFromNode(w, h));
+                tile.SetHeuristicCost(10);
+                grid[h,w] = tile;
+                //Debug.Log("Null Tile at [" + h + "," + w + "]");
+            }//for w
+        }//for h
+        return grid;
+    }
+
+
+    protected Rect computeWorldBounds(List<INode> nodes) {
         Rect box = new Rect();
         box.xMin = float.PositiveInfinity;
         box.xMax = float.NegativeInfinity;
@@ -125,8 +125,8 @@ public class GridSystem : MonoBehaviour{
         box.yMax = float.NegativeInfinity;
 
         for (int i = 0; i < nodes.Count; i++) {
-            GridNode tile = nodes[i];
-            Vector3 pos = tile.transform.position;
+            INode tile = nodes[i];
+            Vector3 pos = tile.GetPosition();
 
             box.xMin = box.xMin <= pos.x ? box.xMin : pos.x;
             box.xMax = box.xMax >= pos.x ? box.xMax : pos.x;
@@ -152,8 +152,8 @@ public class GridSystem : MonoBehaviour{
     ///  Return list of neighbours for the given Node.
     /// </summary>
     /// <param name="node">Node to get neighbours of.</param>
-    public List<GridNode> GetNeighbours(GridNode node) {
-        List<GridNode> neighbours = new List<GridNode>();
+    public List<INode> GetNeighbours(INode node) {
+        List<INode> neighbours = new List<INode>();
 
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
@@ -178,7 +178,7 @@ public class GridSystem : MonoBehaviour{
     ///  Same as GetNeighbours(INode node), except using world position Vector.
     /// </summary>
     /// <param name="worldPos">Vecto Position in the world space (not grid coords).</param>
-    public List<GridNode> GetNeighbours(Vector3 worldPos) {
+    public List<INode> GetNeighbours(Vector3 worldPos) {
         worldPos = this.transform.TransformPoint(worldPos);
 
         GridNode node = GetNodeFromWorld(worldPos) as GridNode;
@@ -186,9 +186,19 @@ public class GridSystem : MonoBehaviour{
     }//GetNeighbours
 
 
-    public GridNode GetNodeFromWorld(Vector3 worldPoint) {
+    public INode GetNodeFromWorld(Vector3 worldPoint) {
         int[] coords = CoordsFromWorld(worldPoint);
-        return Grid[coords[0], coords[1]];
+        INode node = Grid[coords[0], coords[1]];
+        if (node == null) {
+            //Try to find the lowest valid Node at return that.
+            for (int y = coords[1]; y >= 0; y--) {
+                int x = coords[0];
+                if (Grid[x, y] != null)
+                    return Grid[x,y];
+            }//for
+        }//if node
+
+        return node;
     }//GetNodeFromWorld
 
 
@@ -211,14 +221,6 @@ public class GridSystem : MonoBehaviour{
         x = Mathf.Abs(x);
         y = Mathf.Abs(y);
         return new int[] { x, y };
-        //float percentX = (worldPoint.x + WorldSize.x / 2) / WorldSize.x;
-        //float percentY = (worldPoint.y + WorldSize.y / 2) / WorldSize.y;
-        //percentX = Mathf.Clamp01(percentX);
-        //percentY = Mathf.Clamp01(percentY);
-
-        //int x = Mathf.RoundToInt((GridSizeX - 1) * percentX);
-        //int y = Mathf.RoundToInt((GridSizeY - 1) * percentY);
-        //return new int[] { x, y };
     }//GetWorldFromNode
 
 
@@ -236,7 +238,7 @@ public class GridSystem : MonoBehaviour{
 
     /* **************** GETTERS *********************** */
 
-    public GridNode[,] Grid { get; private set; }
+    public INode[,] Grid { get; private set; }
 
 
     /// <summary>
@@ -260,9 +262,9 @@ public class GridSystem : MonoBehaviour{
     public Vector2 WorldSize => new Vector2(this.GridBounds.width, this.GridBounds.height);
     
 
-    public GridNode GetNode(int x, int y) {
+    public INode GetNode(int x, int y) {
         if(Grid == null)
-            Grid = new GridNode[GridSizeX, GridSizeY];
+            Grid = new INode[GridSizeX, GridSizeY];
 
         bool isInHorizontal = (x >= 0 && x < Grid.Length);
         bool isInVertical = (x >= 0 && x < Grid.GetLength(0));

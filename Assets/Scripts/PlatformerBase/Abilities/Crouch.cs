@@ -82,7 +82,7 @@ namespace GHAbilities {
 
             float rayLength = this.origBounds.size.y / 2;
             for (int i = 0; i < cd.Props.HorizontalRays; i++) {
-                var ray = cd.VerticalRay(rayLength, i);
+                var ray = cd.CastVerticalRay(rayLength, i);
                 if (ray.Ray) {
                     this.standUpFlagThisFrame = -1;
                     break;

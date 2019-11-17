@@ -26,6 +26,8 @@ public class ActorAbilitiesProps {
         }
         if (this.CollisionDetection.IsFallingThrough)
             return;
+        if(!this.CollisionDetection.Below)
+            return;
 
         if (Input.GetButtonDown(JumpCmp.InputName)) {
             deltaMovement.y = JumpCmp.Use(deltaMovement).y;

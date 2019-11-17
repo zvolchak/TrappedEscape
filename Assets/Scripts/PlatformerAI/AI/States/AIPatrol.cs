@@ -4,78 +4,70 @@ using UnityEngine;
 
 namespace GHAI {
     namespace AIStates {
-        public class AIPatrol : AIBase {
+        public class AIPatrol : AIPathwalker {
 
-            public float WaitTimeAtPoint = 0f;
+            private bool bUsePatrolPath = false;
+            private bool bCanUseWaypoints = false;
 
-            private WaypointControl _wpCtrl;
-            private bool bHasInit = false;
-            private float timeOfArrival = -1f;
+
+            private void init() {
+                if(!_wpCtrl.bHasInit)
+                    return;
+
+                _wpCtrl.ResetPatrolPoints();
+                bUsePatrolPath = false;
+                Vector3 from = this.AICtrl.ControlledBy.transform.position;
+                Vector3 to = _wpCtrl.PatrolPath[0].transform.position;
+                var path = _wpCtrl.PathfinderCmp.FindPath(from, to);
+                _wpCtrl.SetPatrolPath(path);
+                this.target = _wpCtrl.PatrolPath[0].transform;
+                bCanUseWaypoints = true;
+            }//init
 
 
             public override void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex) {
                 base.OnStateEnter(animator, stateInfo, layerIndex);
-                if (AICtrl.StateMachineAnimator.GetBool("IsDead"))
-                    Interrupt();
-
-                if (!bHasInit && _wpCtrl == null) {
-                    _wpCtrl = AICtrl.GetComponent<WaypointControl>();
-                    bHasInit = true;
-                }
+                this.init();
             }//OnStateEnter
 
 
             public override bool Action() {
-                //if (AICtrl.StateMachineAnimator.GetBool("IsDead"))
-                //    Interrupt();
-                //if (!bHasInit && _wpCtrl == null) {
-                //    _wpCtrl = AICtrl.GetComponent<WaypointControl>();
-                //    bHasInit = true;
-                //}
-                if (_wpCtrl == null)
+                if(!bCanUseWaypoints)
+                    this.init();
+                if(!bCanUseWaypoints)
                     return false;
 
-                Transform currDest = _wpCtrl.GetActivePoint(AICtrl.ControlledBy.gameObject);
-                if (currDest == null) {
-                    currDest = _wpCtrl.GetNext(AICtrl.ControlledBy.gameObject);
-                    _wpCtrl.SetActivePoint(currDest);
-                }
-
-                if (currDest == null)
+                bool isNoAction = !base.Action();
+                if(isNoAction)
                     return false;
-                Vector3 npcPos = AICtrl.ControlledBy.transform.position;
-                Vector3 direction = currDest.position - npcPos;
-                //float distance = Vector3.Distance(npcPos, currDest.position);
-                float distance = Mathf.Abs((npcPos - currDest.position).x);
-                MovementControls mvmt = AICtrl.MvmntCmp;
-
-                if (distance <= mvmt.RunSpeed) {
-                    if (this.WaitTimeAtPoint > 0) {
-                        if (this.timeOfArrival < 0)
-                            this.timeOfArrival = Time.timeSinceLevelLoad;
-                        if (Time.timeSinceLevelLoad - this.timeOfArrival < this.WaitTimeAtPoint)
-                            return false;
-                        else
-                            this.timeOfArrival = -1f;
-                    }//if waittime
-
-                    currDest = _wpCtrl.GetNext(AICtrl.ControlledBy.gameObject);
-                    _wpCtrl.SetActivePoint(currDest);
-                }// if distance
-
-                SwitchDirection dirSwitcher = AICtrl.DirSwitcherCmp;
-                dirSwitcher.OnSwitchDirection(Mathf.Sign(direction.x));
-                mvmt.SetVelocityX((mvmt.RunSpeed) * dirSwitcher.Direction);
 
                 return true;
             }//Action
 
-            public override bool Interrupt() {
-                if (_wpCtrl != null)
-                    _wpCtrl.SetActivePoint(null);
 
-                return true;
+            protected override void OnLastPointReached(WaypointControl wpCtrl) {
+                base.OnLastPointReached(wpCtrl);
+                wpCtrl.FlipIterationIndex();
+
+                if (!bUsePatrolPath) {
+                    var t = wpCtrl.GetActivePoint();
+                    wpCtrl.ResetPatrolPoints();
+                    bUsePatrolPath = true;
+                    this.target = wpCtrl.GetNext(t).transform;
+                }
+            }//OnLastPointReached
+
+
+            protected override void OnFirstPointReached(WaypointControl wpCtrl) {
+                base.OnFirstPointReached(wpCtrl);
+                wpCtrl.FlipIterationIndex();
+            }//OnFirstPointReached
+
+
+            public override bool Interrupt() {
+                return base.Interrupt();
             }//Interrupt
+
         }//class
     }//namespace AIStates
 }//namespace

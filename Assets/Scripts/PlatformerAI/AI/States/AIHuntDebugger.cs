@@ -26,7 +26,7 @@ public class AIHuntDebugger : MonoBehaviour{
     }//Update
 
 
-    public void OnNavigationSelected(List<GridNode> path) {
+    public void OnNavigationSelected(List<INode> path) {
         if(path == null)
             return;
         if (path.Count == 1) {

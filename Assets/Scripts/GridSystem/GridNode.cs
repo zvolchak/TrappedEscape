@@ -17,29 +17,35 @@ public class GridNode : MonoBehaviour, INode{
     private INode parent;
     private BoxCollider2D _boxCollider;
 
-    public List<GridNode> Neighbours = new List<GridNode>();
+    public List<INode> Neighbours = new List<INode>();
 
 
     public void Start() {
+        List<INode> nodes = new List<INode>();
+        for (int i = 0; i < Connections.Count; i++) {
+            nodes.Add(Connections[i]);
+        }
         if (Connections != null)
-            this.AddNeighbour(Connections);
+            this.AddNeighbour(nodes);
     }//Start
 
 
-    public void AddNeighbour(GridNode node) {
+    public void AddNeighbour(INode node) {
         if (node == null)
             return;
         if (this.Neighbours == null)
-            this.Neighbours = new List<GridNode>();
+            this.Neighbours = new List<INode>();
         if (this.Neighbours.Contains(node))
             return;
 
-        this.Neighbours.Add(node);
-        node.AddNeighbour(this);
+        if(!this.Neighbours.Contains(node))
+            this.Neighbours.Add(node);
+        //Add Self to the newlly added neighbour for the "cross reference".
+        node.AddNeighbour(new List<INode>(new INode[] { this }));
     }//AddNeighbour
 
 
-    public void AddNeighbour(List<GridNode> nodes) {
+    public void AddNeighbour(List<INode> nodes) {
         if(nodes == null)
             return;
         for (int i = 0; i < nodes.Count; i++) {
@@ -82,7 +88,8 @@ public class GridNode : MonoBehaviour, INode{
     public bool GetWalkable() { return this.bIsWalkable; }
 
     public void SetPosition(Vector2 pos) {
-        throw new System.NotImplementedException(this.name + " SetPosition not implemented!");
+        this.transform.position = pos;
+        //throw new System.NotImplementedException(this.name + " SetPosition not implemented!");
     }//SetPosition
 
     public Vector2 GetPosition() { return this.transform.position; }
@@ -134,9 +141,12 @@ public class GridNode : MonoBehaviour, INode{
             INode node = this.Neighbours[i];
             if (node == null)
                 continue;
-            //Gizmos.color = Color.green;
-            //Gizmos.DrawLine(this.transform.position, node.GetPosition());
+            Gizmos.color = Color.green;
+            Gizmos.DrawLine(this.transform.position, node.GetPosition());
         }//for
     }//OnDrawGizmos
 
+    public List<INode> GetNeighbours() {
+        return this.Neighbours;
+    }
 }//class GridNode

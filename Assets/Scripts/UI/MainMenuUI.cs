@@ -9,6 +9,8 @@ public class MainMenuUI : MonoBehaviour {
     [Tooltip("Index of the main menu scene to be loaded when there are no next levels.")]
     public int MainMenuIndex = 0;
     public GameObject DefaultScreen;
+    public GameObject LevelCompleteScreen;
+
 
     //private GamepadNavigation _gamepadNav;
     private List<GameObject> menuScreens;

@@ -34,7 +34,7 @@ public class Pathfinder : MonoBehaviour {
     public float SearchTimeout = 20f;
     //public float DebugWaitTime = 0.1f;
 
-    private List<GridNode> calculatedCosts = new List<GridNode>();
+    private List<INode> calculatedCosts = new List<INode>();
 
 
     /// <summary>
@@ -50,22 +50,30 @@ public class Pathfinder : MonoBehaviour {
     //public delegate List<GridNode> SearchCompleteEvent(List<GridNode> path);
     
 
-    public List<GridNode> FindPath(Vector3 from, Vector3 to) {
-        GridNode startNode = GlobalGrid.GetNodeFromWorld(from);
-        GridNode targetNode = GlobalGrid.GetNodeFromWorld(to);
+    public List<INode> FindPath(Vector3 from, Vector3 to) {
+        INode startNode = GlobalGrid.GetNodeFromWorld(from);
+        INode targetNode = GlobalGrid.GetNodeFromWorld(to);
 
-        List<GridNode> opened = new List<GridNode>();
-        List<GridNode> closed = new List<GridNode>();
+        if (startNode == null) {
+#if UNITY_EDITOR
+            Debug.LogWarning("FindPath: startNode is null for pos: " + from);
+#endif
+            return null;
+        }
+
+        List<INode> opened = new List<INode>();
+        List<INode> closed = new List<INode>();
         opened.Add(startNode);
 
         float startTime = Time.timeSinceLevelLoad;
         float searchingTime = 0;
-        while (opened.Count > 0 || searchingTime > 0 || opened.Count > 20) {
+        //|| opened.Count > 20
+        while (opened.Count > 0 || searchingTime > 0) {
             if(opened.Count == 0)
                 break;
 
             searchingTime = Time.timeSinceLevelLoad - startTime; //safety to avoid long pathsearch and infinite loop.
-            GridNode stepNode = this.findCheapestNode(ref opened);
+            INode stepNode = this.findCheapestNode(ref opened);
             opened.Remove(stepNode);
             closed.Add(stepNode);
 
@@ -74,9 +82,9 @@ public class Pathfinder : MonoBehaviour {
                 return path;
             }
 
-            List<GridNode> neighbours = stepNode.Neighbours;
+            List<INode> neighbours = stepNode.GetNeighbours();
             for (int n = 0; n < neighbours.Count; n++) {
-                GridNode neighbour = neighbours[n];
+                INode neighbour = neighbours[n];
 
                 if (!neighbour.GetWalkable() || closed.Contains(neighbour))
                     continue;
@@ -105,11 +113,11 @@ public class Pathfinder : MonoBehaviour {
     }//OnFindPath
 
 
-    protected GridNode findCheapestNode(ref List<GridNode> opened) {
+    protected INode findCheapestNode(ref List<INode> opened) {
         if (opened.Count == 0)
             return null;
 
-        GridNode node = opened[0];
+        INode node = opened[0];
         for (int i = 1; i < opened.Count; i++) { //0 index is a default cheapest node
             float currCost = node.GetCost();
             float newCost = opened[i].GetCost();
@@ -129,14 +137,14 @@ public class Pathfinder : MonoBehaviour {
     /// </summary>
     /// <param name="start"></param>
     /// <param name="end"></param>
-    protected List<GridNode> retracePath(GridNode start, GridNode end) {
-        List<GridNode> path = new List<GridNode>();
+    protected List<INode> retracePath(INode start, INode end) {
+        List<INode> path = new List<INode>();
         //Retracing from End to Start and reverse list back in the end.
-        GridNode currentNode = end;
+        INode currentNode = end;
 
         while (currentNode != start) {
             path.Add(currentNode);
-            currentNode = currentNode.GetParent() as GridNode;
+            currentNode = currentNode.GetParent();
         }//while
 
         //revercing, since list is backwards from End to Start.
