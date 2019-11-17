@@ -57,7 +57,8 @@ namespace GHAbilities {
 
             IsDashing = true;
             if (this.Props.CurrDashTime == -1) { //not dashing yet
-                Player.Instance.GetComponent<CharacterAnimator>().AnimatorCmp.SetTrigger(this.AnimationState);
+                //FIXME: called for Player.Instance! GARBAGE
+                //Player.Instance.GetComponent<CharacterAnimator>().AnimatorCmp.SetTrigger(this.AnimationState);
                 this.Props.CurrDashTime = 0f;
                 this.startSpeed = deltaMovement.x;
             }

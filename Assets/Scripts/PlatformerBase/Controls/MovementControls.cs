@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using GHGameManager;
+using UnityEngine;
 
 namespace GHPlatformerControls {
 
@@ -16,6 +17,7 @@ namespace GHPlatformerControls {
         private float timeOfPush = -1f;
         private float pushbackCooldown = -1f;
         private bool bIsCanInputHorizontal = true;
+        private InputManager _inputMngr;
 
         public delegate Vector2 OnDirectionChanged(Vector2 deltaMovement, float newDir, float prevDir);
         /// <summary>
@@ -27,14 +29,18 @@ namespace GHPlatformerControls {
 
         public virtual void Start() {
             this.MaxRunSpeed = RunSpeed;
+            _inputMngr = GetComponent<InputManager>();
         }//Start
 
 
         public virtual void FixedUpdate() {
             if (InputName == "")
                 return;
-            if(bIsCanInputHorizontal)
-                horizontalAxis = Input.GetAxis(InputName);
+            //FIXME: idk wtf this is. Dont use Input here!
+            if (bIsCanInputHorizontal) {
+                //horizontalAxis = Input.GetAxis(InputName);
+                horizontalAxis = _inputMngr.GetHorizontalAxis();
+            }
         }//Update
 
 

@@ -8,7 +8,9 @@ public class CharacterAnimator : MonoBehaviour{
     private bool bHasRegistered;
     private Animator _animator;
 
-    public Player PlayerCmp => Player.Instance;
+    //public Player PlayerCmp => Player.Instance;
+    //FIXME: Something else here
+    public Player PlayerCmp => null;
     private Crouch _crouchCmp;
 
 
@@ -16,7 +18,7 @@ public class CharacterAnimator : MonoBehaviour{
     }//start
 
     public void Update() {
-        if (Player.Instance.IsCanControl) {
+        if (PlayerCmp.IsCanControl) {
             AnimatorCmp.StopPlayback();
         }
     }//update
@@ -29,7 +31,7 @@ public class CharacterAnimator : MonoBehaviour{
 
 
     public virtual bool InitEvents() {
-        if (Player.Instance == null)
+        if (PlayerCmp == null)
             return false;
 
         this.subscribe();

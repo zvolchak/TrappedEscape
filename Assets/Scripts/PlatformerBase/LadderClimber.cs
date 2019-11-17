@@ -2,6 +2,7 @@
 using GHTriggers;
 using GHPhysics;
 using GHPlatformerControls;
+using GHGameManager;
 
 namespace GHPlatformerControls {
     public class LadderClimber : MonoBehaviour {
@@ -23,6 +24,9 @@ namespace GHPlatformerControls {
 
         private string[] raycastPlatformTags;
         private Vector3 posOfStartClimb;
+
+        //FIXME: dont use input in this CMP!
+        private InputManager _input;
 
         /* ---------------------- EVENTS ---------------------- */
 
@@ -46,6 +50,7 @@ namespace GHPlatformerControls {
         public void Start() {
             if (this.Actor == null)
                 this.Actor = GetComponent<AActor2D>();
+            _input = this.Actor.GetComponent<InputManager>();
         }//Start
 
 
@@ -104,13 +109,13 @@ namespace GHPlatformerControls {
             //FIXME: Move Input from global to objects input listener
             float vertInput = 0;
             if (axisInput == float.NegativeInfinity)
-                vertInput = Input.GetAxis(InputName);
+                vertInput = _input.GetVerticalAxis();
             else
                 vertInput = axisInput;
 
             vertInput = vertInput != 0 ? Mathf.Sign(vertInput) * 1 : 0;
             if (axisInput == float.NegativeInfinity)
-                isPressed = Input.GetButtonDown(InputName);
+                isPressed = _input.GetVerticalAxis() != 0;
             
             //FIXME: !!! Dont snap to Ladder when Down pressed on Solid ground. !!!
 

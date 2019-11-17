@@ -45,7 +45,9 @@ public class BulletShell : MonoBehaviour {
         float swing = Random.Range(PushForce.x, PushForce.y);
         float spingSwing = Random.Range(-10, 10);
 
-        var direction = Mathf.Sign(Player.Instance.transform.localScale.x);
+        //var direction = Mathf.Sign(Player.Instance.transform.localScale.x);
+        //FIXME: THIS! DONT CALL Player.Instance!
+        float direction = 1;
         _rigidbody.AddForce(new Vector2(-1 * direction, 1) * (swing));
         _rigidbody.AddTorque(SpinForce + spingSwing);
     }//FlyAway

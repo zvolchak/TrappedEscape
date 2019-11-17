@@ -88,6 +88,6 @@ public class SwitchDirection : MonoBehaviour {
     public bool IsCanSwitch { get { return this.checkCanSwitch(); } }
     public bool IsSwitching { get; private set; }
     public float Direction { get { return Mathf.Sign(this.transform.localScale.x); } }
-    public Player PlayerCmp => Player.Instance;
+    //public Player PlayerCmp => Player.Instance;
 
 }//class SwitchDirection

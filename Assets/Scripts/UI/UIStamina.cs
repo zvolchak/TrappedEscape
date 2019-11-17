@@ -7,7 +7,7 @@ public class UIStamina : MonoBehaviour {
 
     public Color StaminaUnavailable = Color.red;
 
-    private Player _player => Player.Instance;
+    private Player _player => null; //FIXME: used to be player instance! Something else here!
     private StaminaAttribute _stamina;
     private bool bHasInit = false;
     private Slider _slider;

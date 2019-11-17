@@ -1,4 +1,5 @@
-﻿using GHMisc;
+﻿using GHGameManager;
+using GHMisc;
 using GHPlatformerControls;
 using GHTriggers;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace GHAI {
             protected Transform target = null;
             protected Pathfinder _pathFinder;
             protected WaypointControl _wpCtrl;
+            protected InputManager _input;
             protected bool bHasInit = false;
             protected bool bIsAtTarget = false;
             protected float timeOfArrival = -1f;
@@ -22,6 +24,8 @@ namespace GHAI {
                 base.OnStateEnter(animator, stateInfo, layerIndex);
                 if (_pathFinder == null)
                     _pathFinder = AICtrl.GetComponent<Pathfinder>();
+                if(_input == null)
+                    _input = AICtrl.ControlledBy.GetComponent<InputManager>();
 
                 #if UNITY_EDITOR
                     if (_pathFinder == null)
@@ -77,49 +81,68 @@ namespace GHAI {
                 Vector2 distanceVector = (target.position - AICtrl.transform.position);
                 float distance = Vector2.Distance(AICtrl.transform.position, target.position);
                 //Vector2 deltaMovement = Vector2.right * AICtrl.MvmntCmp.RunSpeed * direction;
-                Vector3 deltaMovement = AICtrl.MvmntCmp.Velocity;
-                if (deltaMovement.x > distance) {
-                    deltaMovement.x = distance;
-                }
-                if (!AICtrl.IsLookingAtTarget(target) &&
-                        Mathf.Abs(distanceVector.x) >= (size.x/2) &&
-                        !AICtrl.LadderClimberCmp.IsClimbing) {
-                    AICtrl.DirSwitcherCmp.OnSwitchDirection();
-                    direction = AICtrl.DirSwitcherCmp.Direction;
-                }
+                //Vector3 deltaMovement = AICtrl.MvmntCmp.Velocity;
+                //if (deltaMovement.x > distance) {
+                //    deltaMovement.x = distance;
+                //}
+                //_input.SetHorizontalAxis(Mathf.Sign(distanceVector.x));
 
+                //if (!AICtrl.IsLookingAtTarget(target) &&
+                //        Mathf.Abs(distanceVector.x) >= (size.x / 2) &&
+                //        !AICtrl.LadderClimberCmp.IsClimbing) {
+                //    //AICtrl.DirSwitcherCmp.OnSwitchDirection();
+                //    //direction = AICtrl.DirSwitcherCmp.Direction;
+                //    _input.SetHorizontalAxis(_input.GetHorizontalAxis() * -1);
+                //}
+                Vector2 inputValue = Vector2.zero;
+                inputValue.x = Mathf.Sign(distanceVector.x);
 
-                bool isAtX = Mathf.Abs(distanceVector.x) <= 0.2f;
+                bool isAtX = Mathf.Abs(distanceVector.x) <= size.x / 2;
                 bool isAtY = false;
-                if (distanceVector.y <= 0 && !AICtrl.LadderClimberCmp.IsClimbing)
+                if (distanceVector.y <= 0 && !AICtrl.LadderClimberCmp.IsClimbing) {
                     isAtY = Mathf.Abs(distanceVector.y) <= size.y / 2;
-                else if (distanceVector.y <= 0 && AICtrl.LadderClimberCmp.IsClimbing) {
-                    isAtY = AICtrl.ControlledBy.IsGrounded;
+                } else if (distanceVector.y <= 0 && AICtrl.LadderClimberCmp.IsClimbing) {
+                    if (Mathf.Abs(distanceVector.y) <= size.y / 2)
+                        isAtY = AICtrl.ControlledBy.IsGrounded;
                 }
 
-                if (!isAtX)
-                    deltaMovement.x = AICtrl.MvmntCmp.RunSpeed * direction;
-                else
-                    deltaMovement.x = 0;
+                //if (!isAtX)
+                //    deltaMovement.x = AICtrl.MvmntCmp.RunSpeed * direction;
+                //else
+                //    deltaMovement.x = 0;
 
-                //FIXME: this shouldn't be here. Should be called first by Actor,
-                //but it doesn't (or it is too late).
-                AICtrl.ControlledBy.CollisionDetector.Move(ref deltaMovement);
+                ////FIXME: this shouldn't be here. Should be called first by Actor,
+                ////but it doesn't (or it is too late).
+                //AICtrl.ControlledBy.CollisionDetector.Move(ref deltaMovement);
 
                 if (isAtX && !isAtY) {
                     if (climbDir == 0)
                         climbDir = Mathf.Sign(distanceVector.normalized.y);
-                    if (AICtrl.LadderClimberCmp.IsOnLadder) {
-                        UseLadder(ref deltaMovement, climbDir);
-                    }
+                    //if (AICtrl.LadderClimberCmp.IsOnLadder) {
+                    //    UseLadder(ref deltaMovement, climbDir);
+                    //}
+                    //_input.SetVerticalAxis(climbDir);
+                    inputValue.y = climbDir;
+                    inputValue.x = 0f;
                 }
 
-                if (AICtrl.LadderClimberCmp.IsClimbing)
-                    isAtY = false;
-                else
+                if (isAtY) {
+                    //_input.SetVerticalAxis(0);
                     climbDir = 0f;
+                    inputValue.y = climbDir;
+                }
 
-                AICtrl.MvmntCmp.SetVelocity(deltaMovement);
+                if(AICtrl.LadderClimberCmp.IsClimbing)
+                    inputValue.x = 0f;
+
+                ////if (AICtrl.LadderClimberCmp.IsClimbing)
+                ////    isAtY = false;
+                ////else
+                ////    climbDir = 0f;
+
+                //AICtrl.MvmntCmp.SetVelocity(deltaMovement);
+                _input.SetHorizontalAxis(inputValue.x);
+                _input.SetVerticalAxis(inputValue.y);
 
                 bool hasArrived = isAtX && isAtY;
                 if (hasArrived) {

@@ -114,7 +114,9 @@ namespace GHAbilities {
                     force = this.Props.BackflipForce;
                 } else {
                     //Switch direction when wall jumping. Feels better that way.
-                    Player.Instance.DirectionSwitcherCmp.OnSwitchDirection(); //FIXME: no direct ref to player!
+                    //FIXME: no direct ref to player!
+                    throw new System.NotImplementedException("HERE! Fixe Calling for Player instance!");
+                    //Player.Instance.DirectionSwitcherCmp.OnSwitchDirection(); 
                 }
 
                 EOnWallJump?.Invoke(this);

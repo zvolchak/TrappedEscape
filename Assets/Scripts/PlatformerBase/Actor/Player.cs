@@ -11,7 +11,7 @@ using GHGameManager;
 [RequireComponent(typeof(CollisionDetection), typeof(MovementControls), typeof(InputManager))]
 public class Player : AActor2D {
 
-    public static Player Instance;
+    //public static Player Instance;
 
     [Tooltip("Value at which X and Y velocity is set to 0")]
     public float MinVelocityThreshold = 0.2f;
@@ -46,8 +46,8 @@ public class Player : AActor2D {
 
     public override void Start () {
         base.Start();
-        if(Instance == null) Instance = this;
-        else Destroy(this.gameObject);
+        //if(Instance == null) Instance = this;
+        //else Destroy(this.gameObject);
 
         //_gravity = GetComponent<Gravity>();
         //_collisionDetection = GetComponent<CollisionDetection>();
@@ -83,15 +83,16 @@ public class Player : AActor2D {
 
     public override void Update() {
         base.Update();
+        this.SwitchDirection();
     }//Update
 
 
-    public override void LateUpdate() {
-        base.LateUpdate();
-        //if (!IsCanControl)
-        //    return;
-        //bIsInAir = !IsGrounded && !IsOnSlope;
-    }//LateUpdate
+    //public override void LateUpdate() {
+    //    base.LateUpdate();
+    //    //if (!IsCanControl)
+    //    //    return;
+    //    //bIsInAir = !IsGrounded && !IsOnSlope;
+    //}//LateUpdate
 
 
     public override void HandleVelocity(ref Vector2 deltaMovement) {
@@ -99,7 +100,7 @@ public class Player : AActor2D {
             return;
 
         //float horizontalInput = Input.GetAxisRaw("Horizontal");
-        float horizontalInput = _inputMngr.GetHorizontalAxis();
+        //float horizontalInput = _inputMngr.GetHorizontalAxis();
 
         this.Abilities.HandleJumping(ref deltaMovement);
 
@@ -137,10 +138,10 @@ public class Player : AActor2D {
             (Abilities.WallGrabCmp.IsOnWall || Abilities.WallGrabCmp.IsBackflipJumping))
             return;
 
-        float horizontalAxis = Input.GetAxis("Horizontal");
+        //float horizontalAxis = Input.GetAxis("Horizontal");
+        float horizontalAxis = _inputMngr.GetHorizontalAxis();
         if (horizontalAxis == 0)
             return;
-
         float sign = Mathf.Sign(horizontalAxis);
         if (Mathf.Sign(this.transform.localScale.x) != sign)
             DirectionSwitcherCmp.OnSwitchDirection();

@@ -53,11 +53,17 @@ namespace GHAI {
 
 
         public bool IsInVisibleRange() {
-            if (Player.Instance == null)
-                return false;
+            //FIXME: DONT USE INSTANCE
+            //if (Player.Instance == null)
+            //    return false;
 
-            if (this.Target == null)
-                this.Target = Player.Instance;
+            //if (this.Target == null)
+            //    this.Target = Player.Instance;
+
+            //FIXME: DONT use Player.Instance for target!
+            if (this.Target == null) {
+                return false;
+            }
             float visionDir = (this.transform.position - this.Target.transform.position).normalized.x;
             if (-visionDir != DirSwitcherCmp.Direction)
                 return false;
