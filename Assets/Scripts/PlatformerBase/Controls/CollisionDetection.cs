@@ -27,7 +27,7 @@ public class CollisionDetection : MonoBehaviour {
     public RaycastMeta[] HorizontalRayMeta { get; private set; }
 
     public bool Above { get; private set; }
-    public bool Below { get; private set; }
+    public bool Below;
     public bool Left  { get; private set; }
     public bool Right { get; private set; }
 

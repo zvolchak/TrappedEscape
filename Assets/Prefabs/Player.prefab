@@ -48,8 +48,8 @@ MonoBehaviour:
   AnimationState: 
   ActorParent: {fileID: 7754124031306231359}
   Props:
-    JumpHeight: 0.1
-    JumpSpeed: 0.4
+    JumpHeight: 0.18
+    JumpSpeed: 0.45
     MaxJumps: 1
     MinHeight: 0.05
     JumpSound: {fileID: 0}
@@ -99,9 +99,10 @@ GameObject:
   - component: {fileID: 7754124031306231329}
   - component: {fileID: 7754124031306231330}
   - component: {fileID: 7754124031306231331}
+  - component: {fileID: 1528927296}
   m_Layer: 9
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -115,7 +116,7 @@ Transform:
   m_GameObject: {fileID: 7754124031306231356}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.9, y: -7.33, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_Children:
   - {fileID: 7754124032487189406}
   - {fileID: 7754124030786708486}
@@ -232,7 +233,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aaeede35e4267cf4995f1417895c3e44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Force: -2
+  Force: -3
   CurrentGravity: 0
 --- !u!114 &7754124031306231353
 MonoBehaviour:
@@ -251,7 +252,7 @@ MonoBehaviour:
     ClimbingSlope: 45
     CollisionMask:
       serializedVersion: 2
-      m_Bits: 768
+      m_Bits: 256
     CollisionIgnoreTags: []
     PlatformTags:
     - Platform
@@ -262,6 +263,7 @@ MonoBehaviour:
     First: {r: 0, g: 1, b: 1, a: 1}
     Last: {r: 0.5, g: 0.5, b: 0.5, a: 1}
     Special: {r: 0, g: 0, b: 1, a: 1}
+  Below: 0
 --- !u!114 &7754124031306231352
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -290,7 +292,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77884cfb9e97bda45a884a6599296158, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CollisionDetector: {fileID: 0}
+  CollisionDetectionCmp: {fileID: 0}
   MinVelocityThreshold: 0.2
   MaxVelocityThreshold: {x: 10, y: 15}
   LandingDustSfx: {fileID: 0}
@@ -336,8 +338,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cb6e2d53fff70d4f99c30ac02e39fec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LethalHeight: 9
-  StaggerHeight: 0.5
+  LethalHeight: 11
+  StaggerHeight: 0.806
   DrawHeightGizmos: 0
   StaggerEffector:
     StatusName: 
@@ -415,7 +417,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aad1566854b6c84db11701841b4b154, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InputReverse: 1
+  HorizontalReverse: 1
+  VerticalReverse: 1
+--- !u!114 &1528927296
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7754124031306231356}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 167644d36e48fc7488fdcff2d9e3ce5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ToggleTimeout: 0.1
+  PlatformTag: Platform
+  DownInput: Vertical
+  JumpInput: Jump
 --- !u!1 &7754124032487189405
 GameObject:
   m_ObjectHideFlags: 0

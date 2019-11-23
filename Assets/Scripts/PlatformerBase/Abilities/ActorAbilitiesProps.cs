@@ -19,6 +19,8 @@ public class ActorAbilitiesProps {
     public void HandleJumping(ref Vector2 deltaMovement) {
         if (this.JumpCmp == null)
             return;
+        if(this.Actor.DropthroughCmp != null && this.Actor.DropthroughCmp.IsDropping)
+            return;
 
         if (this.WallGrabCmp != null && this.WallGrabCmp.IsOnWall) {
             JumpCmp.Reset();
