@@ -25,6 +25,8 @@ public class ExitController : TriggerListener{
         if (bHasDoorUsed) {
             return;
         } else {
+            if(MmUi == null)
+                return;
             if(MmUi.LevelCompleteScreen.activeSelf)
                 MmUi.LevelCompleteScreen.SetActive(false);
         }

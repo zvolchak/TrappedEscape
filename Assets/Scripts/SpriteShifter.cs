@@ -53,6 +53,9 @@ public class SpriteShifter : TriggerListener {
         bHasUsed = false;
         this.IsMainTerminal = true;
         for (int i = 0; i < ShifterConnections.Count; i++) {
+            if(ShifterConnections[i] == null)
+                continue;
+
             ShifterConnections[i].IsMainTerminal = true;
         }//for
     }//OnTriggerExit2D

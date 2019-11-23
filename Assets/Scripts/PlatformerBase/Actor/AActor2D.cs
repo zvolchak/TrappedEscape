@@ -14,13 +14,13 @@ public class AActor2D : MonoBehaviour {
     public Damageable DamagableCmp { get; private set; }
     public SpriteRenderer SpriteRendererCmp { get; private set; }
     public Gravity Gravity { get; private set; }
-    public CollisionDetection CollisionDetector;
+    public CollisionDetection CollisionDetectionCmp;
+    public PlatformDropthrough DropthroughCmp { get; private set; }
 
     protected bool bCanToggleLanded;
     protected bool prevGroundState;
 
-
-    public virtual bool IsGrounded => CollisionDetector != null && CollisionDetector.Below;
+    public virtual bool IsGrounded => CollisionDetectionCmp != null && CollisionDetectionCmp.Below;
 
     /// <summary>
     ///  Player was in the air last frame, but this frame has IsGrounded = true.
@@ -60,8 +60,11 @@ public class AActor2D : MonoBehaviour {
         DamagableCmp = GetComponent<Damageable>();
         SpriteRendererCmp = GetComponent<SpriteRenderer>();
         Gravity = GetComponent<Gravity>();
-        if(CollisionDetector == null)
-            CollisionDetector = GetComponent<CollisionDetection>();
+
+        DropthroughCmp = GetComponent<PlatformDropthrough>();
+
+        if(CollisionDetectionCmp == null)
+            CollisionDetectionCmp = GetComponent<CollisionDetection>();
     }//Start
 
 
@@ -71,7 +74,7 @@ public class AActor2D : MonoBehaviour {
             bCanToggleLanded = false;
         }//if
 
-        if (IsGrounded && bCanToggleLanded)
+        if (IsGrounded && bCanToggleLanded && !DropthroughCmp.IsDropping)
             IsLanded = true;
 
         if (!this.IsGrounded)
@@ -83,7 +86,17 @@ public class AActor2D : MonoBehaviour {
         if (this.Gravity != null)
             this.Gravity.Apply(ref deltaMovement);
 
-        CollisionDetector.Move(ref deltaMovement);
+        if (DropthroughCmp.IsCanDropthrough) {
+            if (DropthroughCmp.IsDropping) {
+                if (!CollisionDetectionCmp.Props.CollisionIgnoreTags.Contains("Platform"))
+                    CollisionDetectionCmp.Props.CollisionIgnoreTags.Add("Platform");
+            } else {
+                if (CollisionDetectionCmp.Props.CollisionIgnoreTags.Contains("Platform"))
+                    CollisionDetectionCmp.Props.CollisionIgnoreTags.Remove("Platform");
+            }
+        }//if IsCanDropthrough
+
+        CollisionDetectionCmp.Move(ref deltaMovement);
 
         MvmntCmp.SetVelocity(deltaMovement);
         transform.Translate(MvmntCmp.Velocity);
@@ -94,16 +107,15 @@ public class AActor2D : MonoBehaviour {
         Vector2 deltaMovement = MvmntCmp.Velocity;
         HandleMovingPlatform(ref deltaMovement);
         HandleMovement(ref deltaMovement);
+        DropthroughCmp.Check();
 
-        if (CollisionDetector.Left || CollisionDetector.Right)
+        if (CollisionDetectionCmp.Left || CollisionDetectionCmp.Right)
             MvmntCmp.ResetPushForce();
 
-        //if (AACmp != null)
-        //    AACmp.SetVelocity(Mathf.Abs(deltaMovement.x));
         HandleVelocity(ref deltaMovement);
         MvmntCmp.SetVelocity(deltaMovement);
 
-        if (this.IsGrounded && !prevGroundState) {
+        if (this.IsGrounded && !prevGroundState && !DropthroughCmp.IsDropping) {
             IsLanded = true;
             this.EOnLanded?.Invoke();
         }//if landed
@@ -133,10 +145,10 @@ public class AActor2D : MonoBehaviour {
 
 
     public virtual void HandleMovingPlatform(ref Vector2 deltaMovement) {
-        foreach (RaycastMeta meta in CollisionDetector.VerticalRayMeta) {
+        foreach (RaycastMeta meta in CollisionDetectionCmp.VerticalRayMeta) {
             if (!meta.Ray)
                 continue;
-            if (!meta.HitTag.Equals("Platform"))
+            if (!meta.HitTag.Equals("LiftPlatform"))
                 continue;
 
             this.transform.SetParent(meta.Ray.collider.transform);

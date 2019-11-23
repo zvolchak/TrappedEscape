@@ -42,11 +42,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1843506835640813759}
     m_Modifications:
-    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
-        type: 3}
-      propertyPath: m_Name
-      value: nosticky_1x2
-      objectReference: {fileID: 0}
     - target: {fileID: 4303587163640619721, guid: 44d9d34ec41e1704bbe3101f777b5db6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -102,6 +97,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
+        type: 3}
+      propertyPath: m_Name
+      value: nosticky_1x2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44d9d34ec41e1704bbe3101f777b5db6, type: 3}
 --- !u!4 &8847478755247364520 stripped
@@ -117,11 +117,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1843506835640813759}
     m_Modifications:
-    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
-        type: 3}
-      propertyPath: m_Name
-      value: nosticky_1x2 (1)
-      objectReference: {fileID: 0}
     - target: {fileID: 4303587163640619721, guid: 44d9d34ec41e1704bbe3101f777b5db6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -176,6 +171,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
+        type: 3}
+      propertyPath: m_Name
+      value: nosticky_1x2 (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44d9d34ec41e1704bbe3101f777b5db6, type: 3}
@@ -252,6 +252,81 @@ PrefabInstance:
       propertyPath: m_Name
       value: ground_nobreak_5x1 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 7611327055167598454, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 877499791
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611327055167598454, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7611327055167598454, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119510982328735509, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 877499791
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119510982328735509, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8119510982328735509, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821309273396232191, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 877499791
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821309273396232191, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8821309273396232191, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175235580576358598, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 877499791
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175235580576358598, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4175235580576358598, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 85
+      objectReference: {fileID: 0}
+    - target: {fileID: 4161329035486910775, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: 877499791
+      objectReference: {fileID: 0}
+    - target: {fileID: 4161329035486910775, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4161329035486910775, guid: 16b1f8e9530f8984292cd6a9a221dfa7,
+        type: 3}
+      propertyPath: m_SortingOrder
+      value: 85
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16b1f8e9530f8984292cd6a9a221dfa7, type: 3}
 --- !u!4 &9137669961382931385 stripped
@@ -267,11 +342,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1843506835640813759}
     m_Modifications:
-    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
-        type: 3}
-      propertyPath: m_Name
-      value: nosticky_1x2 (2)
-      objectReference: {fileID: 0}
     - target: {fileID: 4303587163640619721, guid: 44d9d34ec41e1704bbe3101f777b5db6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -332,6 +402,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.x
       value: -1
       objectReference: {fileID: 0}
+    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
+        type: 3}
+      propertyPath: m_Name
+      value: nosticky_1x2 (2)
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44d9d34ec41e1704bbe3101f777b5db6, type: 3}
 --- !u!4 &8847478754643127782 stripped
@@ -347,11 +422,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1843506835640813759}
     m_Modifications:
-    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
-        type: 3}
-      propertyPath: m_Name
-      value: nosticky_1x2 (3)
-      objectReference: {fileID: 0}
     - target: {fileID: 4303587163640619721, guid: 44d9d34ec41e1704bbe3101f777b5db6,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -411,6 +481,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalScale.x
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7674912797853609531, guid: 44d9d34ec41e1704bbe3101f777b5db6,
+        type: 3}
+      propertyPath: m_Name
+      value: nosticky_1x2 (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44d9d34ec41e1704bbe3101f777b5db6, type: 3}

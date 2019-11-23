@@ -22,7 +22,7 @@ namespace GHPlatformerControls {
         /// </summary>
         public Ladder ActiveLadder { get; private set; }
 
-        private string[] raycastPlatformTags;
+        public string[] raycastPlatformTags;
         private Vector3 posOfStartClimb;
 
         //FIXME: dont use input in this CMP!
@@ -104,7 +104,7 @@ namespace GHPlatformerControls {
                 return;
 
             Gravity gravity = this.Actor.Gravity;
-            CollisionDetection cd = this.Actor.CollisionDetector;
+            CollisionDetection cd = this.Actor.CollisionDetectionCmp;
 
             //FIXME: Move Input from global to objects input listener
             float vertInput = 0;
@@ -135,21 +135,22 @@ namespace GHPlatformerControls {
             if (!IsClimbing)
                 return;
 
-            //if (cd != null) {
-            //    Debug.Log(this.Actor.IsGrounded);
-            //    RaycastHit2D ray = cd.VerticalRayMeta[cd.VerticalRayMeta.Length / 2].Ray;
-            //    //Vector3 deltaMovement = Vector3.up * axisInput;
-            //    //if (!ray) {
-            //    //    ray = cd.CastVerticalRay(deltaMovement.y, cd.VerticalRayMeta.Length / 2).Ray;
-            //    //}
+            if (cd != null) {
+                RaycastHit2D ray = cd.VerticalRayMeta[cd.VerticalRayMeta.Length / 2].Ray;
+                Vector3 deltaMovement = Vector3.up * axisInput;
+                if (!ray) {
+                    ray = cd.CastVerticalRay(deltaMovement.y, cd.VerticalRayMeta.Length / 2).Ray;
+                }
 
-            //    if (vertInput < 0) {
-            //        if (ray) this.enableRaycastIgnoreTags(true);
-            //        else this.enableRaycastIgnoreTags(false);
-            //    } else {
-            //        this.enableRaycastIgnoreTags(false);
-            //    }//if
-            //}//if cd
+                if (vertInput < 0) {
+                    if (ray)
+                        this.enableRaycastIgnoreTags(true);
+                    else
+                        this.enableRaycastIgnoreTags(false);
+                } else {
+                    this.enableRaycastIgnoreTags(false);
+                }//if
+            }//if cd
 
             if (gravity != null && vertInput != 0)
                 gravity.SetGravity(0);
@@ -222,10 +223,10 @@ namespace GHPlatformerControls {
         public bool GetActorGrounded(float distance=0) {
             if (this.Actor == null)
                 return false;
-            if (this.Actor.CollisionDetector == null)
+            if (this.Actor.CollisionDetectionCmp == null)
                 return false;
 
-            CollisionDetection cd = this.Actor.CollisionDetector;
+            CollisionDetection cd = this.Actor.CollisionDetectionCmp;
             bool isGrounded = cd.Below || cd.IsOnSlope;
             //Already grounded? No need to cast rays then...
             if(isGrounded)
@@ -252,16 +253,16 @@ namespace GHPlatformerControls {
         protected void enableRaycastIgnoreTags(bool state) {
             if(this.Actor == null)
                 return;
-            if(this.Actor.CollisionDetector == null)
+            if(this.Actor.CollisionDetectionCmp == null)
                 return;
             if(state && this.IsRaycastTagsIgnored)
                 return;
             if (!state && !this.IsRaycastTagsIgnored)
                 return;
 
-            CollisionDetection cd = this.Actor.CollisionDetector;
+            CollisionDetection cd = this.Actor.CollisionDetectionCmp;
 
-            if (this.raycastPlatformTags == null)
+            if (this.raycastPlatformTags == null || this.raycastPlatformTags.Length == 0)
                 this.raycastPlatformTags = cd.Props.PlatformTags.ToArray();
 
             if (this.raycastPlatformTags == null || this.raycastPlatformTags.Length == 0)
@@ -291,7 +292,7 @@ namespace GHPlatformerControls {
         /// </summary>
         public bool IsRaycastTagsIgnored {
             get {
-                return this.raycastPlatformTags != null;
+                return this.raycastPlatformTags != null && this.raycastPlatformTags.Length != 0;
             }//get
         }//IsRaycastTagsIgnored
     }//class

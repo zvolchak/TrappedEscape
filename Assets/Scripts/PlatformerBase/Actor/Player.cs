@@ -25,7 +25,7 @@ public class Player : AActor2D {
     //private Gravity _gravity;
     public ActorAbilitiesProps Abilities;
 
-    private PlatformDropthrough _dropthrough;
+    //private PlatformDropthrough _dropthrough;
     //private MovementControls MvmntCmp;
     //private CollisionDetection _collisionDetection;
     private CharacterAnimator _charAnimator;
@@ -52,7 +52,7 @@ public class Player : AActor2D {
         //_gravity = GetComponent<Gravity>();
         //_collisionDetection = GetComponent<CollisionDetection>();
         //MvmntCmp = GetComponent<MovementControls>();
-        _dropthrough = GetComponent<PlatformDropthrough>();
+        //_dropthrough = GetComponent<PlatformDropthrough>();
         _charAnimator = GetComponent<CharacterAnimator>();
         _ladderClimber = GetComponent<LadderClimber>();
         _inputMngr = GetComponent<InputManager>();
@@ -72,6 +72,7 @@ public class Player : AActor2D {
     ///  Cast ground rays to set IsGrounded flag.
     /// </summary>
     public override void FixedUpdate() {
+        DropthroughCmp.SetCanDropthrough(!_ladderClimber.IsOnLadder);
         if (!SpriteRendererCmp.enabled)
             return;
         base.FixedUpdate();
@@ -185,7 +186,7 @@ public class Player : AActor2D {
     //}
 
     //public bool IsOnSlope { get { return this._raycastGround.IsOnSlope; } }
-    public bool IsOnSlope { get { return CollisionDetector.IsOnSlope; } }
+    public bool IsOnSlope { get { return CollisionDetectionCmp.IsOnSlope; } }
 
     ///// <summary>
     /////  Player was in the air last frame, but this frame has IsGrounded = true.

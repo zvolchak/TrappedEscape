@@ -1,19 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &8577664193683762646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6466876076918928198}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3a19d9c45b55ddd4f9d7185053a7e8f3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Target: {fileID: 0}
-  ExposedSfx: {fileID: 550974207}
 --- !u!82 &550974208
 AudioSource:
   m_ObjectHideFlags: 0
@@ -127,6 +113,20 @@ MonoBehaviour:
   AudioSoundEffect: {fileID: 0}
   IsParticleAsChild: 0
   IsAllowCashing: 0
+--- !u!114 &8577664193683762646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6466876076918928198}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a19d9c45b55ddd4f9d7185053a7e8f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Target: {fileID: 0}
+  ExposedSfx: {fileID: 550974207}
 --- !u!1001 &3612690911603629434
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -142,12 +142,12 @@ PrefabInstance:
     - target: {fileID: 7754124031306231358, guid: 2e2ae8ac0042fb143922e849be8d9492,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -10.6
+      value: -9.6
       objectReference: {fileID: 0}
     - target: {fileID: 7754124031306231358, guid: 2e2ae8ac0042fb143922e849be8d9492,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -7.33
+      value: -8.17
       objectReference: {fileID: 0}
     - target: {fileID: 7754124031306231358, guid: 2e2ae8ac0042fb143922e849be8d9492,
         type: 3}
@@ -209,6 +209,11 @@ PrefabInstance:
         type: 3}
       propertyPath: VerticalReverse
       value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7754124030786708485, guid: 2e2ae8ac0042fb143922e849be8d9492,
+        type: 3}
+      propertyPath: ActorParent
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2e2ae8ac0042fb143922e849be8d9492, type: 3}

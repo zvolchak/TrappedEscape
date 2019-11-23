@@ -14,7 +14,7 @@ namespace GHTriggers {
 
         protected Rigidbody2D _rigidBody;
         protected BoxCollider2D _boxCollider;
-        private bool bIsReset;
+        protected bool bIsReset;
 
         public virtual void Start() {
             Reset();

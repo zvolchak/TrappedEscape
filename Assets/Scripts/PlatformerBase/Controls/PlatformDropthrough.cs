@@ -4,7 +4,7 @@ using UnityEngine;
 
 ///<summery>
 ///</summery>
-[RequireComponent(typeof(Collider2D), typeof(RaycastGround))]
+[RequireComponent(typeof(Collider2D))]
 public class PlatformDropthrough : MonoBehaviour {
 
     public float ToggleTimeout = 0.2f;
@@ -14,13 +14,22 @@ public class PlatformDropthrough : MonoBehaviour {
     public bool IsDropping { get; private set; }
 
     private List<Collider2D> _colliders;
-    private RaycastGround _raycastGround;
+    //private RaycastGround _raycastGround;
+    private CollisionDetection _cd;
     private bool isDownPressed, isJumpPressed;
     private bool isReleasedSinceDrop = true;
 
+    /// <summary>
+    ///  Not used anywhere in the scope of this class, but can be set by outside
+    /// world and checkfor somewhere in AACtor or whatever.
+    /// </summary>
+    public bool IsCanDropthrough { get; private set; }
+
+
     public void Start() {
-        _raycastGround = GetComponent<RaycastGround>();
+        //_raycastGround = GetComponent<RaycastGround>();
         _colliders = new List<Collider2D>();
+        _cd = GetComponent<CollisionDetection>();
         var colliders = GetComponents<Collider2D>();
         //Object can have several colliders. Need to get only
         //the non trigger ones.
@@ -28,6 +37,8 @@ public class PlatformDropthrough : MonoBehaviour {
             if(!cld.isTrigger)
                 _colliders.Add(cld);
         }//foreach
+
+        IsCanDropthrough = true;
     }//Start
 
 
@@ -45,7 +56,6 @@ public class PlatformDropthrough : MonoBehaviour {
             isJumpPressed = false;
             isReleasedSinceDrop = true;
         }
-
         if (IsDropping || !isReleasedSinceDrop) //already dropping down. Don't need to check again.
             return;
 
@@ -61,13 +71,13 @@ public class PlatformDropthrough : MonoBehaviour {
 
 
     public bool IsOnPlatform() {
-        RaycastMeta[] rays = _raycastGround.OnRaycast();
+        //RaycastMeta[] rays = _raycastGround.OnRaycast();
+        RaycastMeta rays = _cd.CastVerticalRay(-1, 2);
         int index = (int)(rays.Length / 2);
-        if(rays[index] == null || !rays[index].Ray)
+        if (rays == null || !rays.Ray)
             return false;
 
-        GameObject hittedObj = rays[index].Ray.transform.gameObject;
-
+        GameObject hittedObj = rays.Ray.transform.gameObject;
         if(hittedObj == null)
             return false;
 
@@ -78,7 +88,6 @@ public class PlatformDropthrough : MonoBehaviour {
     public void OnDropthrough() {
         if(IsDropping)
             return;
-
         StartCoroutine(ToggleColliders(ToggleTimeout));
     }//OnDropthrough
 
@@ -98,5 +107,9 @@ public class PlatformDropthrough : MonoBehaviour {
         }//for
     }//Toggle
 
+
+    public void SetCanDropthrough(bool state) {
+        IsCanDropthrough = state;
+    }
 
 }//PlatformDropthrough
