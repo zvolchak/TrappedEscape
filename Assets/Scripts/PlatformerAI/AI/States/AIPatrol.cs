@@ -1,5 +1,6 @@
 ﻿using GHMisc;
 using GHPlatformerControls;
+using System.Collections;
 using UnityEngine;
 
 namespace GHAI {
@@ -8,6 +9,8 @@ namespace GHAI {
 
             private bool bUsePatrolPath = false;
             private bool bCanUseWaypoints = false;
+            private bool deferPointSwitch = false;
+            private WaypointControl wp;
 
 
             private void init() {
@@ -41,12 +44,24 @@ namespace GHAI {
                 if(isNoAction)
                     return false;
 
+                //if (deferPointSwitch) {
+                //    if (!_wpCtrl.IsWaitingAtWaypoint) {
+                //        if (this.wp != null) {
+                //            this.AICtrl.MvmntCmp.SetVelocityX(0);
+                //        }
+                //    }
+                //}
+
                 return true;
             }//Action
 
 
             protected override void OnLastPointReached(WaypointControl wpCtrl) {
                 base.OnLastPointReached(wpCtrl);
+                if (wpCtrl.IsWaitingAtWaypoint) {
+                    this.deferPointSwitch = true;
+                    return;
+                }
                 wpCtrl.FlipIterationIndex();
 
                 if (!bUsePatrolPath) {
@@ -60,6 +75,11 @@ namespace GHAI {
 
             protected override void OnFirstPointReached(WaypointControl wpCtrl) {
                 base.OnFirstPointReached(wpCtrl);
+                if (wpCtrl.IsWaitingAtWaypoint) {
+                    this.deferPointSwitch = true;
+                    return;
+                }
+
                 wpCtrl.FlipIterationIndex();
             }//OnFirstPointReached
 

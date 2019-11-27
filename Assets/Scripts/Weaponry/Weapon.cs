@@ -5,7 +5,6 @@ using UnityEngine;
 ///  A Base class for the Weapon mechanics. The Component should be a child of the object which
 ///  will be using it.
 /// </summary>
-[RequireComponent(typeof(SpriteRenderer))]
 public class Weapon: MonoBehaviour {
 
     public WeaponProps Props;
@@ -131,8 +130,11 @@ public class Weapon: MonoBehaviour {
 
     public SpriteRenderer SpriteCmp {
         get {
-            if (_spriter == null)
+            if (_spriter == null) {
                 _spriter = GetComponent<SpriteRenderer>();
+                if(_spriter == null)
+                    _spriter = GetComponentInChildren<SpriteRenderer>();
+            }
             return _spriter;
         }//get
     }//SpriteCmp

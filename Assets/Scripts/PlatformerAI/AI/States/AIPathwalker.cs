@@ -141,13 +141,15 @@ namespace GHAI {
                 ////    climbDir = 0f;
 
                 //AICtrl.MvmntCmp.SetVelocity(deltaMovement);
-                _input.SetHorizontalAxis(inputValue.x);
-                _input.SetVerticalAxis(inputValue.y);
-
                 bool hasArrived = isAtX && isAtY;
                 if (hasArrived) {
                     this.target = _wpCtrl.GetNext().transform;
+                    inputValue.x = 0;
                 }
+
+                _input.SetHorizontalAxis(inputValue.x);
+                _input.SetVerticalAxis(inputValue.y);
+
 
                 return hasArrived;
             }//GoToTarget

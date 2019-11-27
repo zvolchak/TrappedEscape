@@ -35,9 +35,9 @@ public class WGun : Weapon {
                 ProjectilePool = PoolManager.Instance.FindPoolByPrefab(Props.ProjectilePrefab);
         }//if
 
-        float directionSign = Mathf.Sign(Owner.transform.localScale.x);
-        if (this.Owner != null)
-            directionSign = this.Owner.transform.localScale.x;
+        Vector3 ownerLocalScale = Owner != null ? Owner.transform.localScale : this.transform.lossyScale;
+
+        float directionSign = Mathf.Sign(ownerLocalScale.x);
 
         Vector3 spawnPosition = Props.Nozzle == null ? this.transform.position : Props.Nozzle.position;
 

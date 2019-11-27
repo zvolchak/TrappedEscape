@@ -39,8 +39,9 @@ public class Projectile : MonoBehaviour {
         Bounds cameraBounds = GameUtils.Utils.OrthographicBounds(Camera.main);
         bool[] isInView = GameUtils.Utils.IsWithinBounds(cameraBounds, this.transform.position);
         bool isInCamera = isInView[0] && isInView[1];
-        if (!isInCamera)
+        if (this.Props.IsOffCameraDestroy && !isInCamera) {
             Destroy();
+        }
     }//Update
 
 
@@ -179,6 +180,7 @@ public class ProjectileProps {
     public float ProjectileTimeout = 2f;
     [Tooltip("Shooting force to apply to projectile.")]
     public float Force = 500f;
+    public bool IsOffCameraDestroy = true;
 
     [Range(-0.1f, 1f)] public float PierceThroughChance = 0;
 }//class

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using GHTriggers;
 using System.Collections.Generic;
+using GHCamera;
 
 public class SpriteShifter : TriggerListener {
 
@@ -123,6 +124,11 @@ public class SpriteShifter : TriggerListener {
             if(toShift[i].IsCanShift)
                 toShift[i].ShowTrueSprite();
         }//for
+
+        CameraShake shaker = Camera.main.GetComponent<CameraShake>();
+        if (shaker != null) {
+            shaker.ShakeRandomly();
+        }
     }//Shift
 
 

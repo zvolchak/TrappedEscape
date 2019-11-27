@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -16,6 +17,7 @@ namespace GHMisc {
         public Transform PatrolPoints;
         public Pathfinder PathfinderCmp;
         public bool IsDebug = false;
+        public float WaitAtPointInSeconds = 1f;
 
         public List<GridNode> PatrolPath;
         
@@ -23,7 +25,9 @@ namespace GHMisc {
         public bool bHasInit { get; private set; }
         private List<GridNode> origPoints;
         private int nextNodeIncreaseIndex = 1; //going for Next or Previous node.
+        private Coroutine waitAtPointRoutine;
 
+        public bool IsWaitingAtWaypoint => this.waitAtPointRoutine != null;
 
         public delegate void OnPointReached(WaypointControl wpCtrl);
         public OnPointReached EOnLastPointReached;
@@ -106,9 +110,17 @@ namespace GHMisc {
                 return null;
             }
 
-            if (index >= PatrolPath.Count-1) EOnLastPointReached?.Invoke(this);
-            else if (index <= 0) EOnFirstPointReached?.Invoke(this);
-            else EOnPointReached?.Invoke(this);
+            if (index >= PatrolPath.Count - 1) {
+                if(this.waitAtPointRoutine != null)
+                    this.waitAtPointRoutine = StartCoroutine(WaitAtWaypoint());
+                EOnLastPointReached?.Invoke(this);
+            } else if (index <= 0) {
+                if(this.waitAtPointRoutine != null)
+                    this.waitAtPointRoutine = StartCoroutine(WaitAtWaypoint());
+                EOnFirstPointReached?.Invoke(this);
+            } else {
+                EOnPointReached?.Invoke(this);
+            }
 
             index += nextNodeIncreaseIndex;
 
@@ -213,6 +225,14 @@ namespace GHMisc {
                 result = furthest;
             return result;
         }
+
+
+        public IEnumerator WaitAtWaypoint() {
+
+            yield return new WaitForSeconds(WaitAtPointInSeconds);
+
+            this.waitAtPointRoutine = null;
+        }//WaitAtWaypoint
 
 
         public void SetPatrolPath(List<INode> newPoints) {
