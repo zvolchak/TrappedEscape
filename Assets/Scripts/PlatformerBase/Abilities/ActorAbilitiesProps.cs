@@ -31,7 +31,7 @@ public class ActorAbilitiesProps {
         if(!this.CollisionDetection.Below)
             return;
 
-        if (Input.GetButtonDown(JumpCmp.InputName)) {
+        if (JumpCmp.InputName != "" && Input.GetButtonDown(JumpCmp.InputName)) {
             deltaMovement.y = JumpCmp.Use(deltaMovement).y;
              if(this.WallGrabCmp != null) this.WallGrabCmp.Reset();
             //_wallJump.Reset();
@@ -42,7 +42,7 @@ public class ActorAbilitiesProps {
                 this.Actor.transform.SetParent(null);
         }
 
-        if (Input.GetButtonUp(JumpCmp.InputName))
+        if (JumpCmp.InputName != "" && Input.GetButtonUp(JumpCmp.InputName))
             bIsStopJump = true;
 
         if (!bIsStopJump)

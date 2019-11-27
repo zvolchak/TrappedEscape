@@ -3,7 +3,6 @@
 
 public class PoolableObject : MonoBehaviour{
 
-    private ObjectPool _pool;
     private SpriteRenderer _spriteRenderer;
     /// <summary>
     /// Return a GameObject that instantiated this object.
@@ -26,11 +25,7 @@ public class PoolableObject : MonoBehaviour{
     }
 
 
-    public ObjectPool OwnedByPool {
-        get {
-            return _pool;
-        }
-    }
+    public ObjectPool OwnedByPool { get; private set; }
 
 
     public void SetActive(bool state) {
@@ -46,7 +41,7 @@ public class PoolableObject : MonoBehaviour{
     ///  A pool that created this object will set itself as ThePool here.
     /// </summary>
     /// <param name="thePool"></param>
-    public void SetOwnerPool(ObjectPool thePool) { this._pool = thePool; }
+    public void SetOwnerPool(ObjectPool thePool) { this.OwnedByPool = thePool; }
 
 
     public void SetInstantiator(GameObject whoCreatedIt) {
@@ -56,8 +51,11 @@ public class PoolableObject : MonoBehaviour{
 
     public SpriteRenderer SpriteCmp {
         get {
-            if(_spriteRenderer == null)
+            if (_spriteRenderer == null) {
                 _spriteRenderer = GetComponent<SpriteRenderer>();
+                if(_spriteRenderer == null)
+                    _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            }
             return _spriteRenderer;
         }
     }

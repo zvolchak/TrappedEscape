@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Connections: []
+  MovementCost: 1
 --- !u!1 &4026604127101604235
 GameObject:
   m_ObjectHideFlags: 0
@@ -151,6 +152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Connections: []
+  MovementCost: 1
 --- !u!1 &5973401459559987009
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,9 +220,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 2136633313
-  m_SortingLayer: 3
-  m_SortingOrder: 50
+  m_SortingLayerID: 877499791
+  m_SortingLayer: 2
+  m_SortingOrder: 73
   m_Sprite: {fileID: 21300008, guid: 73acc5a64308d864ca5bfe912352b9f9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -299,9 +301,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 2136633313
-  m_SortingLayer: 3
-  m_SortingOrder: 50
+  m_SortingLayerID: 877499791
+  m_SortingLayer: 2
+  m_SortingOrder: 73
   m_Sprite: {fileID: 21300008, guid: 73acc5a64308d864ca5bfe912352b9f9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -357,6 +359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Connections: []
+  MovementCost: 1
 --- !u!1 &8456124683563097263
 GameObject:
   m_ObjectHideFlags: 0
@@ -424,9 +427,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 2136633313
-  m_SortingLayer: 3
-  m_SortingOrder: 50
+  m_SortingLayerID: 877499791
+  m_SortingLayer: 2
+  m_SortingOrder: 73
   m_Sprite: {fileID: 21300010, guid: 73acc5a64308d864ca5bfe912352b9f9, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
